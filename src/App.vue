@@ -3,9 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import Login from './views/user/Login.vue'
+import Login from "./views/user/Login.vue";
 </script>
-
 
 
 <style scoped>

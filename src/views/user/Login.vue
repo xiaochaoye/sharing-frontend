@@ -1,94 +1,136 @@
 <template>
-  <div class="login" style="height: 100vh; background-color: aqua">
-  <div class="login-form">
-    <a-form
-        :model="formState"
-        name="basic"
-        :label-col="{ span: 8 }"
-        :wrapper-col="{ span: 16 }"
-        autocomplete="off"
-        @finish="onFinish"
-        @finishFailed="onFinishFailed"
-    >
-      <a-form-item
-          label="Username"
-          name="username"
-          :rules="ValidateRules.name[0]"
-      >
-        <a-input v-model:value="formState.username" style="height: 50px"/>
-      </a-form-item>
-
-      <a-form-item
-          label="Password"
-          name="password"
-          :rules="ValidateRules.name[1]"
-      >
-        <a-input-password v-model:value="formState.password"/>
-      </a-form-item>
-
-      <a-form-item name="remember" :wrapper-col="{ offset: 8, span: 16 }">
-        <a-checkbox v-model:checked="formState.remember">Remember me</a-checkbox>
-      </a-form-item>
-
-      <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-        <a-button type="primary" html-type="submit">Submit</a-button>
-        <a-button style="margin-left: 10px" @click="resetFields">Reset</a-button>
-      </a-form-item>
-    </a-form>
-  </div>
-  </div>
+  <a-row class="layout" type="flex" justify="center" align="middle">
+    <a-card class="login_card" bodyStyle="height:100%;padding:unset;" hoverable>
+      <div class="card_body">
+        <div class="login_img">
+          <img src="/src/assets/th.jpg"/>
+          <p>分享知识</p>
+        </div>
+        <div class="login_form">
+          <a-form class="form" ref="loginFormRef" layout="vertical" :rules="loginRules" :model="loginForm">
+            <a-form-item label="账号:" name="username">
+              <a-input v-model:value="loginForm.username" size="large"/>
+            </a-form-item>
+            <a-form-item label="密码:" name="password">
+              <a-input-password v-model:value="loginForm.password" size="large"/>
+            </a-form-item>
+            <a-form-item>
+              <a-button type="primary" size="large" block @click="onSubmit">提交</a-button>
+            </a-form-item>
+          </a-form>
+        </div>
+      </div>
+    </a-card>
+  </a-row>
 </template>
-<script lang="ts" setup>
-import {reactive} from 'vue';
 
-interface FormState {
+<script setup lang="ts">
+import {reactive, ref, toRaw} from 'vue';
+import {useRouter} from 'vue-router';
+import axios from 'axios';
+
+interface formState {
   username: string;
   password: string;
-  remember: boolean;
 }
 
-const formState = reactive<FormState>({
+const router = useRouter();
+const loginFormRef = ref();
+const loginForm: formState = reactive({
   username: '',
   password: '',
-  remember: true,
 });
-
-const ValidateRules = reactive({
-  name: [
-    {required: true, message: 'Please input your username!'},
-    {required: true, message: 'Please input your password!'}
-  ]
-})
-const onFinish = (values: any) => {
-  console.log('Success:', values);
+const loginRules = {
+  username: [
+    {
+      required: true,
+      message: '账号在4~8位之间',
+      trigger: 'change',
+      min: 4,
+      max: 8
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: '密码长度在4~8位之间',
+      trigger: 'change',
+      min: 4,
+      max: 8
+    },
+  ],
 };
 
-const onFinishFailed = (errorInfo: any) => {
-  console.log('Failed:', errorInfo);
+const onSubmit = () => {
+  loginFormRef.value.validate().then(() => {
+    axios({
+      url: '/mock/api/login',
+      method: 'POST',
+      data: toRaw(loginForm),
+    }).then((res) => {
+      console.log(res.data);
+      router.push({path: '/'});
+    });
+  });
 };
 
-const resetFields = () => {
-  console.log("清空")
-}
+
 </script>
 
-
-<style>
-.login {
+<style lang="less" scoped>
+.layout {
   width: 100%;
   height: 100vh;
-  background-color: #1a1a1a;
-}
-.login-form {
-  position: absolute;
-  top: 50%;
-  width: 300px;
-  height: 250px;
-  left: 50%;
-  background-color: #9fc0b7;
-  background-size: 100% auto;
-  transform: translate3d(-50%, -50%, 0);
-  display: flex;
-}
+  background: url("src/assets/bg.jpg") repeat;
 
+  .login_card {
+    width: 100%;
+    height: 100%;
+    max-width: 1000px;
+    max-height: 550px;
+    border-radius: 10px;
+    background: #fff;
+    opacity: 0.8;
+  }
+
+  .card_body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .login_img {
+    background: #1890ff;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      padding: 10px;
+      background: #fff;
+      max-width: 160px;
+    }
+
+    p {
+      margin: 20px 0;
+      font-size: 22px;
+      color: #fff;
+    }
+  }
+
+  .login_form {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .form {
+      width: 100%;
+      max-width: 380px;
+    }
+  }
+}
 </style>
