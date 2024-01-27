@@ -1,9 +1,9 @@
 <template>
-  <a-row class="layout" type="flex" justify="center" align="middle">
+  <a-row class="layout" type="flex" justify="center">
     <a-card class="login_card" bodyStyle="height:100%;padding:unset;" hoverable>
       <div class="card_body">
         <div class="login_img">
-          <img src="/src/assets/th.jpg"/>
+          <img src="/src/assets/kkbomb.jpg"/>
           <p>分享知识</p>
         </div>
         <div class="login_form">
@@ -21,12 +21,15 @@
         </div>
       </div>
     </a-card>
+
+
   </a-row>
 </template>
 
 <script setup lang="ts">
 import {reactive, ref, toRaw} from 'vue';
 import {useRouter} from 'vue-router';
+import {message} from 'ant-design-vue';
 import axios from 'axios';
 
 interface formState {
@@ -62,26 +65,44 @@ const loginRules = {
 };
 
 const onSubmit = () => {
-  loginFormRef.value.validate().then(() => {
-    axios({
-      url: '/mock/api/login',
-      method: 'POST',
-      data: toRaw(loginForm),
-    }).then((res) => {
-      console.log(res.data);
-      router.push({path: '/'});
-    });
-  });
+  // loginFormRef.value.validate().then(() => {
+  //   axios({
+  //     url: '/mock/api/login',
+  //     method: 'POST',
+  //     data: toRaw(loginForm),
+  //   }).then((res) => {
+  //     console.log(res.data);
+  //     router.push({path: '/'});
+  //   });
+  // });
+  const account = loginForm.username;
+  const password = loginForm.password;
+
+  if (account == "1234" && password == "1234") {
+    message.success('登录成功');
+    console.log("123")
+  } else {
+    message.error('登录失败，请重试');
+    console.log("321")
+  }
 };
 
 
 </script>
 
 <style lang="less" scoped>
+//.alert-content {
+//  position: absolute;
+//  z-index: 1000;
+//  top: 40px;
+//}
+
 .layout {
   width: 100%;
   height: 100vh;
+  align-items: center;
   background: url("src/assets/bg.jpg") repeat;
+  position: relative;
 
   .login_card {
     width: 100%;
