@@ -32,7 +32,7 @@ B-->D(fa:fa-spinner);
 
 const save = () => {
   console.log(text.value)
-  const filePath = "C:\\Users\\wangchao\\Desktop\\getCaptcha\\output.txt"
+  const filePath = "output.txt"
   const blob = new Blob([text.value], {type: 'text/plain'});
   const downloadLink = document.createElement('a');
   downloadLink.href = URL.createObjectURL(blob);
