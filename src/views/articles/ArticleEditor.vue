@@ -32,7 +32,7 @@ B-->D(fa:fa-spinner);
 
 const save = () => {
   console.log(text.value)
-  const filePath = "C:\\Users\\wangchao\\Desktop\\getCaptcha\\output.txt"
+  const filePath = "output.txt"
   const blob = new Blob([text.value], {type: 'text/plain'});
   const downloadLink = document.createElement('a');
   downloadLink.href = URL.createObjectURL(blob);
@@ -40,9 +40,16 @@ const save = () => {
   downloadLink.click();
 }
 
-const testing = () => {
-  console.log()
-  insertImage
+const testing = (event, insertImage, files) => {
+  console.log(files)
+  insertImage({
+    url:
+        'https://tse2-mm.cn.bing.net/th/id/OIP-C._kg3QODJ9oexfLJEmQePzgHaGr?rs=1&pid=ImgDetMain',
+    desc: '小鸡子',
+    // 回显后端返回的图片路径和描述
+    // width: 'auto',
+    // height: 'auto',
+  });
 }
 
 </script>
