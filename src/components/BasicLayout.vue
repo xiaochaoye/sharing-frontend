@@ -1,9 +1,22 @@
 <template>
   <div class="main-content">
-    <div class="top-content">
-      <!-- 头部-->
-
-    </div>
+    <!-- 头部-->
+    <el-menu
+        :default-active="activeIndex"
+        class="top-content"
+        mode="horizontal"
+        background-color="#545c64"
+        text-color="#fff"
+        active-text-color="#ffd04b"
+        @select="handleSelect"
+    >
+      <el-menu-item index="1">主页</el-menu-item>
+      <el-menu-item index=2>Info</el-menu-item>
+      <el-menu-item index="3">Info</el-menu-item>
+      <el-menu-item index="4">Orders</el-menu-item>
+      <el-avatar shape="square" size="medium"
+                 src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png"/>
+    </el-menu>
     <div class="center-content">
       <!-- 主内容-->
       <ArticleEditor/>
@@ -17,11 +30,14 @@
   </div>
 </template>
 <script setup lang="ts">
-
 import ArticleEditor from "../views/articles/ArticleEditor.vue";
 import ShowArticle from "../views/articles/ShowArticle.vue";
+import {ref} from 'vue'
 
-
+const activeIndex = ref('1')
+const handleSelect = (key: string, keyPath: string[]) => {
+  console.log(key, keyPath)
+}
 </script>
 <style lang="less" scoped>
 .main-content {
@@ -32,7 +48,7 @@ import ShowArticle from "../views/articles/ShowArticle.vue";
 
   .top-content {
     height: 50px;
-    background-color: #efadad;
+    background-color: #53aae7;
   }
 
   .center-content {
