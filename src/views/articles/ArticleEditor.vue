@@ -1,5 +1,7 @@
 <template>
-  <v-md-editor v-model="text" :disabled-menus="[]" height="400px" @save="save" @upload-image="testing"/>
+  <v-md-editor v-model="text" :disabled-menus="[]" height="400px" @save="save" default-show-toc="true"
+               mode="edit"
+               @upload-image="testing"/>
 </template>
 
 <script setup lang="ts">

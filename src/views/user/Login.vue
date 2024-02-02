@@ -30,7 +30,7 @@
 import {reactive, ref, toRaw} from 'vue';
 import {useRouter} from 'vue-router';
 import {message} from 'ant-design-vue';
-import axios from 'axios';
+import myAxios from "../../plugins/myAxios.ts";
 
 interface formState {
   username: string;
@@ -64,27 +64,22 @@ const loginRules = {
   ],
 };
 
-const onSubmit = () => {
-  // loginFormRef.value.validate().then(() => {
-  //   axios({
-  //     url: '/mock/api/login',
-  //     method: 'POST',
-  //     data: toRaw(loginForm),
-  //   }).then((res) => {
-  //     console.log(res.data);
-  //     router.push({path: '/'});
-  //   });
-  // });
-  const account = loginForm.username;
-  const password = loginForm.password;
-
-  if (account == "1234" && password == "1234") {
-    message.success('登录成功');
-    console.log("123")
-  } else {
-    message.error('登录失败，请重试');
-    console.log("321")
-  }
+const onSubmit = async () => {
+  loginFormRef.value.validate().then(() => {
+    myAxios.post('/user/login', {
+      // data: toRaw(loginForm),
+      userAccount: loginForm.username,
+      userPassword: loginForm.password
+    }).then((res) => {
+      console.log(res);
+      if (res.code === 0 && res.data) {
+        router.push('/write');
+        message.success('登录成功')
+      } else {
+        message.error(res.message);
+      }
+    });
+  });
 };
 
 
