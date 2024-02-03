@@ -14,6 +14,9 @@
             <a-form-item label="密码:" name="password">
               <a-input-password v-model:value="loginForm.password" size="large"/>
             </a-form-item>
+            <a-form-item label="确认密码:" name="password">
+              <a-input-password v-model:value="loginForm.check" size="large"/>
+            </a-form-item>
             <a-form-item>
               <a-button type="primary" size="large" block @click="onSubmit">提交</a-button>
             </a-form-item>
@@ -21,20 +24,19 @@
         </div>
       </div>
     </a-card>
-
-
   </a-row>
 </template>
 
 <script setup lang="ts">
-import {reactive, ref, toRaw} from 'vue';
+import {reactive, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {message} from 'ant-design-vue';
-import myAxios from "../../plugins/myAxios.ts";
+import myAxios from "../plugins/myAxios.ts";
 
 interface formState {
   username: string;
   password: string;
+  check: string;
 }
 
 const router = useRouter();
@@ -42,6 +44,7 @@ const loginFormRef = ref();
 const loginForm: formState = reactive({
   username: '',
   password: '',
+  check: ''
 });
 const loginRules = {
   username: [
@@ -56,32 +59,31 @@ const loginRules = {
   password: [
     {
       required: true,
-      message: '密码长度在4~8位之间',
+      message: '密码长度在8~15位之间',
       trigger: 'change',
-      min: 4,
-      max: 8
+      min: 8,
+      max: 15
     },
   ],
 };
 
 const onSubmit = async () => {
   loginFormRef.value.validate().then(() => {
-    myAxios.post('/user/login', {
-      // data: toRaw(loginForm),
+    myAxios.post('/user/register', {
       userAccount: loginForm.username,
-      userPassword: loginForm.password
+      userPassword: loginForm.password,
+      checkPassword: loginForm.check
     }).then((res) => {
       console.log(res);
       if (res.code === 0 && res.data) {
-        router.push('/write');
-        message.success('登录成功')
+        router.push('/login');
+        message.success('注册成功')
       } else {
-        message.error(res.message);
+        message.error(res.description);
       }
     });
   });
 };
-
 
 </script>
 
@@ -96,7 +98,7 @@ const onSubmit = async () => {
   width: 100%;
   height: 100vh;
   align-items: center;
-  background: url("src/assets/bg.jpg") repeat;
+  background: url("../assets/bg-login.jpg") repeat;
   position: relative;
 
   .login_card {
