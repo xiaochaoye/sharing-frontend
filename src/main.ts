@@ -2,6 +2,8 @@ import {createApp} from 'vue'
 import App from './App.vue'
 import * as VueRouter from 'vue-router'
 import routes from './config/route.ts';
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import ElementPlus from 'element-plus'
 import VueMarkdownEditor from '@kangc/v-md-editor';
 import VMdPreview from '@kangc/v-md-editor/lib/preview'
 import '@kangc/v-md-editor/lib/style/base-editor.css';
@@ -53,4 +55,7 @@ const router = VueRouter.createRouter({
 app.use(VueMarkdownEditor)
 app.use(VMdPreview)
 app.use(router);
+app.use(ElementPlus, {
+      locale: zhCn,
+})
 app.mount('#app');

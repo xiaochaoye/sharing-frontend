@@ -2,7 +2,10 @@
   <div class="main-content">
     <!-- 头部-->
     <div class="top-content">
-      <div style="width: 1200px; background-color: #1a1a1a; height: 100%"></div>
+      <div class="icon">
+        <img src="/src/assets/knowledge.png">
+        <span style="text-align: center">知识分享</span>
+      </div>
       <el-menu
           :default-active="routes"
           class="top"
@@ -47,10 +50,17 @@
 import routes from '../config/route.ts'
 import {UserFilled, Promotion} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
+import myAxios from "../plugins/myAxios.ts";
 
 const router = useRouter();
 const choosePage = (command: any) => {
-  router.push(command)
+  if (command == "/logout") {
+    alert("退出成功")
+    myAxios.post('/user/logout')
+    router.push('/login')
+  } else {
+    router.push(command)
+  }
 }
 </script>
 
@@ -64,7 +74,8 @@ const choosePage = (command: any) => {
   .top-content {
     display: flex;
     justify-content: space-between;
-    background-color: #53aae7;
+    //background: linear-gradient(to right, #79e8e1 0%, #b490ca 100%, #5ee7df 0%);
+    background-image: linear-gradient(to right, #79e8e1, #53aae7, #79e8e1);
     align-items: center;
     padding-right: 20px;
     box-sizing: border-box;
@@ -72,8 +83,18 @@ const choosePage = (command: any) => {
 
   .top {
     height: 50px;
-    background-color: #53aae7;
+    background-color: rgba(0, 0, 0, 0);
     flex: 1;
+  }
+
+  .icon {
+    width: 140px;
+    height: 100%;
+    margin: 0px 20px 0 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
   }
 
   .center-content {
@@ -85,7 +106,8 @@ const choosePage = (command: any) => {
 
   .footer-content {
     height: 50px;
-    background-color: #9d9df1;
+    //background-color: #9d9df1;
+    background-image: linear-gradient(to right, #79e8e1, #53aae7, #79e8e1);
     text-align: center;
     line-height: 50px;
   }

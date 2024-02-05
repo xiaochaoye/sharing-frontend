@@ -1,31 +1,67 @@
 <template>
   <div class="content">
     <el-form :model="form" label-width="120px">
-      <el-form-item label="Activity name">
+      <div style="font-size: 20px">修改信息</div>
+      <el-divider/>
+
+      <el-form-item label="用户昵称">
         <el-input v-model="form.name"/>
       </el-form-item>
-      <el-form-item label="Activity zone">
-        <el-select v-model="form.region" placeholder="please select your zone">
-          <el-option label="Zone one" value="shanghai"/>
-          <el-option label="Zone two" value="beijing"/>
-        </el-select>
+      <el-form-item label="账号">
+        <el-input v-model="form.account"/>
       </el-form-item>
-      <el-form-item label="Activity time">
+      <el-form-item label="密码">
+        <el-input v-model="form.password"/>
+      </el-form-item>
+      <el-form-item label="头像上传">
+        <!--todo action为图片上传的地址-->
+        <el-upload v-model:file-list="fileList" action="#" list-type="picture-card" :auto-upload="false" limit="1"
+                   :on-exceed="checkQuantity"
+                   accept=".jpg,.png"
+                   v-show="showUploadFile">
+          <el-icon>
+            <Plus/>
+          </el-icon>
+          <template #file="{ file }">
+            <div>
+              <img class="el-upload-list__item-thumbnail" :src="file.url" alt=""/>
+              <span class="el-upload-list__item-actions">
+                  <span
+                      class="el-upload-list__item-preview"
+                      @click="handlePictureCardPreview(file)"
+                  >
+                    <el-icon><zoom-in/></el-icon>
+                  </span>
+                  <span
+                      v-if="!disabled"
+                      class="el-upload-list__item-delete"
+                      @click="handleRemove"
+                  >
+                    <el-icon><Delete/></el-icon>
+                  </span>
+                </span>
+            </div>
+          </template>
+        </el-upload>
+
+        <el-dialog v-model="dialogVisible">
+          <img w-full :src="dialogImageUrl" alt="Preview Image"/>
+        </el-dialog>
+      </el-form-item>
+
+      <el-form-item label="性别">
+        <!--todo  获取性别的值      -->
+        <el-radio-group v-model="radio">
+          <el-radio :label="0">男</el-radio>
+          <el-radio :label="1">女</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="生日">
         <el-col :span="11">
           <el-date-picker
-              v-model="form.date1"
+              v-model="form.date"
               type="date"
-              placeholder="Pick a date"
-              style="width: 100%"
-          />
-        </el-col>
-        <el-col :span="2" class="text-center">
-          <span class="text-gray-500">-</span>
-        </el-col>
-        <el-col :span="11">
-          <el-time-picker
-              v-model="form.date2"
-              placeholder="Pick a time"
+              placeholder="选择日期"
               style="width: 100%"
           />
         </el-col>
@@ -60,27 +96,48 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive} from 'vue'
+import {reactive, ref} from 'vue'
+import type {UploadFile, UploadUserFile,} from 'element-plus'
+import {ElMessage} from "element-plus";
+import {Plus, Delete, ZoomIn} from "@element-plus/icons-vue";
+
+const radio = ref(0)
+const showUploadFile = ref(true)
+const dialogImageUrl = ref('')
+const dialogVisible = ref(false)
+const disabled = ref(false)
+const fileList = reactive<UploadUserFile[]>([])
+const handlePictureCardPreview = (file: UploadFile) => {
+  dialogImageUrl.value = file.url!
+  dialogVisible.value = true
+}
+
+const handleRemove = () => {
+  fileList.length = 0
+}
+
+function checkQuantity() {
+  ElMessage.error("当前限制选择 1 个文件，请删除后继续上传")
+}
 
 const form = reactive({
   name: '',
   region: '',
-  date1: '',
-  date2: '',
+  date: '',
   delivery: false,
   type: [],
   resource: '',
   desc: '',
 })
 
+
 const onSubmit = () => {
   console.log()
 }
 </script>
 
-<style scoped>
+<style lang="less">
 .content {
-  //margin: 30px 400px 0 400px;
   margin: 30px auto 0;
   background-color: #ffffff;
   height: calc(100% - 30px);
@@ -88,5 +145,6 @@ const onSubmit = () => {
   box-sizing: border-box;
   max-width: 1000px;
   min-width: 700px;
+  opacity: 0.9;
 }
 </style>

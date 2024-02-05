@@ -1,7 +1,9 @@
 <template>
-  <v-md-editor v-model="text" :disabled-menus="[]" height="400px" @save="save" default-show-toc="true"
-               mode="edit"
-               @upload-image="testing"/>
+  <div class="content">
+    <v-md-editor v-model="text" :disabled-menus="[]" height="100%" @save="save" default-show-toc="true"
+                 mode="edit"
+                 @upload-image="testing"/>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -56,6 +58,17 @@ const testing = (event, insertImage, files) => {
 
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+.vuepress-markdown-body {
+  height: 100%;
+}
 
+.content {
+  width: 60%;
+  height: calc(100% - 20px);
+  background-color: #ffffff;
+  margin: 20px auto 0 auto;
+  overflow: auto;
+  opacity: 0.9;
+}
 </style>
