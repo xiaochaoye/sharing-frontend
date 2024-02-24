@@ -10,7 +10,8 @@
 import {ref} from "vue";
 
 const text = ref(`
-### 除了已经列举出来的功能外还支持 ***emoji***、***katex***、***mermaid***、***todo-list***、***tip*** 等功能
+### 右上角全屏编写更方便
+#### 除了已经列举出来的功能外还支持 ***emoji***、***katex***、***mermaid***、***todo-list***、***tip*** 等功能
 ---
 :smile: :copyright:
 ---
