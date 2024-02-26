@@ -7,22 +7,23 @@
       <el-form-item label="用户昵称">
         <el-input v-model="form.name" clearable maxlength="10" show-word-limit/>
       </el-form-item>
+
       <el-form-item label="头像上传">
         <!--todo action为图片上传的地址-->
         <el-upload
             ref="upload"
-            class="upload-demo"
             action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
             :limit="1"
+            :before-upload="beforeAvatarUpload"
             :on-exceed="handleExceed"
             :auto-upload="false"
         >
           <template #trigger>
-            <el-button type="primary">select file</el-button>
+            <el-button type="primary" style="margin-right: 0px">选择头像</el-button>
+            <el-button class="ml-3" type="success" @click="submitUpload">
+              上传
+            </el-button>
           </template>
-          <el-button class="ml-3" type="success" @click="submitUpload">
-            upload to server
-          </el-button>
           <template #tip>
             <div class="el-upload__tip text-red">
               限制上传1个文件，新文件将覆盖旧文件
@@ -39,7 +40,8 @@
       </el-form-item>
       <el-form-item label="生日">
         <el-col :span="11">
-          <el-date-picker v-model="form.date" type="date" placeholder="选择日期" style="width: 100%"/>
+          <el-date-picker v-model="form.date" type="date" placeholder="选择日期" style="width: 100%"
+                          value-format="YYYY-MM-DD"/>
         </el-col>
       </el-form-item>
       <el-form-item label="电话">
@@ -58,7 +60,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">提交</el-button>
+        <el-button type="primary" @click="updateSubmit">提交</el-button>
         <el-button @click="onCancel">重置</el-button>
       </el-form-item>
     </el-form>
@@ -67,8 +69,8 @@
 
 <script lang="ts" setup>
 import {reactive, ref} from 'vue'
-import type {FormInstance, FormRules} from 'element-plus'
-import {ElMessage} from "element-plus";
+import {FormInstance, genFileId, UploadInstance, UploadProps, UploadRawFile, ElMessage} from 'element-plus'
+import myAxios from "../../plugins/myAxios.ts";
 
 interface RuleForm {
   name: string
@@ -97,10 +99,41 @@ const form = reactive<RuleForm>({
 //   ],
 // })
 
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  if (rawFile.type !== 'image/jpeg' || 'image/png') {
+    ElMessage.error('图片上传格式为JPG或PNG!')
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 2) {
+    ElMessage.error('图片不能大于2MB!')
+    return false
+  }
+  return true
+}
 
-const onSubmit = () => {
+const upload = ref<UploadInstance>()
+
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  upload.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  upload.value!.handleStart(file)
+}
+
+const submitUpload = () => {
+  upload.value!.submit()
+}
+
+
+const updateSubmit = () => {
   console.log(form.email + emailSuffix.value)
   console.log(form)
+  myAxios.post('/user/update', {
+    username: form.name,
+    gender: form.gender,
+    userBirthday: form.date,
+    phone: form.phone,
+    email: form.email + emailSuffix.value
+  })
 }
 
 const onCancel = () => {
