@@ -24,7 +24,7 @@
         <!--        <input type="text" placeholder="请输入内容"/>-->
         <el-dropdown @command="choosePage">
           <el-avatar shape="square" size="medium"
-                     src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png"/>
+                     :src="avatarImage"/>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item :icon="UserFilled" command="/edit">个人主页</el-dropdown-item>
@@ -51,11 +51,35 @@ import routes from '../config/route.ts'
 import {UserFilled, Promotion} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 import myAxios from "../plugins/myAxios.ts";
+import {ElMessage} from "element-plus";
+import {getCurrentUser} from "../config/user.ts";
+import {onBeforeMount, onMounted, ref} from "vue";
 
 const router = useRouter();
+
+const avatarImage = ref<string>('https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png')
+
+const myAvatarImage = async () => {
+  const loginUser = await getCurrentUser();
+  console.log('loginUser:', loginUser)
+  return loginUser ? loginUser.avatarUrl : 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png';
+}
+
+onMounted(async () => {
+  try {
+    const result = await myAvatarImage();
+    if (result !== null) {
+      avatarImage.value = result;
+    }
+  } catch (error) {
+    console.error('错误原因：', error);
+  }
+})
+
+// console.log(myAvatarImage);
 const choosePage = (command: any) => {
   if (command == "/logout") {
-    alert("退出成功")
+    ElMessage.success("退出成功")
     myAxios.post('/user/logout')
     router.push('/login')
   } else {

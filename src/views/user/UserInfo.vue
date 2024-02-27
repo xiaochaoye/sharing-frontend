@@ -20,7 +20,7 @@
         >
           <template #trigger>
             <el-button type="primary" style="margin-right: 0px">选择头像</el-button>
-            <el-button class="ml-3" type="success" @click="submitUpload">
+            <el-button class="ml-3" type="success" @click="imageUpload">
               上传
             </el-button>
           </template>
@@ -71,6 +71,7 @@
 import {reactive, ref} from 'vue'
 import {FormInstance, genFileId, UploadInstance, UploadProps, UploadRawFile, ElMessage} from 'element-plus'
 import myAxios from "../../plugins/myAxios.ts";
+import {getCurrentUser} from "../../config/user.ts";
 
 interface RuleForm {
   name: string
@@ -119,15 +120,20 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   upload.value!.handleStart(file)
 }
 
-const submitUpload = () => {
+const imageUpload = () => {
   upload.value!.submit()
 }
 
 
-const updateSubmit = () => {
-  console.log(form.email + emailSuffix.value)
-  console.log(form)
-  myAxios.post('/user/update', {
+const updateSubmit = async () => {
+  // console.log(form.email + emailSuffix.value)
+  // console.log(form)
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    ElMessage.warning('用户未登录！')
+  }
+  await myAxios.post('/user/update', {
+    id: currentUser.id,
     username: form.name,
     gender: form.gender,
     userBirthday: form.date,
