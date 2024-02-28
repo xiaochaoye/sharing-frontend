@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <el-form :model="form" :rules="inputRules" ref="ruleFormRef" label-width="120px">
+    <el-form :model="form" :rules="inputRules" ref="infoFormRef" label-width="120px">
       <div style="font-size: 20px">修改信息</div>
       <el-divider/>
 
@@ -19,7 +19,7 @@
             :auto-upload="false"
         >
           <template #trigger>
-            <el-button type="primary" style="margin-right: 0px">选择头像</el-button>
+            <el-button type="primary">选择头像</el-button>
             <el-button class="ml-3" type="success" @click="imageUpload">
               上传
             </el-button>
@@ -81,9 +81,9 @@ interface RuleForm {
   email: string
 }
 
-const ruleFormRef = ref<FormInstance>()
+const infoFormRef = ref<FormInstance>()
 
-const emailSuffix = ref('@qq.com')
+const emailSuffix = ref()
 
 const form = reactive<RuleForm>({
   name: '',
@@ -122,6 +122,11 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 
 const imageUpload = () => {
   upload.value!.submit()
+  // myAxios.post('/uploadAvatar', upload, {
+  //   headers: {
+  //     "Content-Type": 'multipart/form-data'
+  //   }
+  // })
 }
 
 

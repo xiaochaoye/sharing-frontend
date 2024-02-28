@@ -53,7 +53,7 @@ import {useRouter} from "vue-router";
 import myAxios from "../plugins/myAxios.ts";
 import {ElMessage} from "element-plus";
 import {getCurrentUser} from "../config/user.ts";
-import {onBeforeMount, onMounted, ref} from "vue";
+import {onMounted, ref} from "vue";
 
 const router = useRouter();
 
