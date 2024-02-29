@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <el-form :model="form" :rules="inputRules" ref="infoFormRef" label-width="120px">
+    <el-form :model="form" ref="infoFormRef" label-width="120px">
       <div style="font-size: 20px">修改信息</div>
       <el-divider/>
 
@@ -11,25 +11,24 @@
       <el-form-item label="头像上传">
         <!--todo action为图片上传的地址-->
         <el-upload
-            ref="upload"
-            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+            :http-request="httpRequest"
+            multiple
+            :show-file-list="true"
+            list-type="picture-card"
             :limit="1"
             :before-upload="beforeAvatarUpload"
-            :on-exceed="handleExceed"
             :auto-upload="false"
         >
-          <template #trigger>
-            <el-button type="primary">选择头像</el-button>
-            <el-button class="ml-3" type="success" @click="imageUpload">
-              上传
-            </el-button>
-          </template>
+          <el-icon class="avatar-uploader-icon">
+            <Plus/>
+          </el-icon>
           <template #tip>
-            <div class="el-upload__tip text-red">
+            <div class="el-upload__tip">
               限制上传1个文件，新文件将覆盖旧文件
             </div>
           </template>
         </el-upload>
+
       </el-form-item>
 
       <el-form-item label="性别">
@@ -69,7 +68,7 @@
 
 <script lang="ts" setup>
 import {reactive, ref} from 'vue'
-import {FormInstance, genFileId, UploadInstance, UploadProps, UploadRawFile, ElMessage} from 'element-plus'
+import {FormInstance, UploadProps, ElMessage} from 'element-plus'
 import myAxios from "../../plugins/myAxios.ts";
 import {getCurrentUser} from "../../config/user.ts";
 
@@ -111,39 +110,54 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   return true
 }
 
-const upload = ref<UploadInstance>()
+//定义一个响应式数组用来接收图片
+const fileList = ref([]);
 
-const handleExceed: UploadProps['onExceed'] = (files) => {
-  upload.value!.clearFiles()
-  const file = files[0] as UploadRawFile
-  file.uid = genFileId()
-  upload.value!.handleStart(file)
-}
-
-const imageUpload = () => {
-  upload.value!.submit()
-  // myAxios.post('/uploadAvatar', upload, {
-  //   headers: {
-  //     "Content-Type": 'multipart/form-data'
-  //   }
-  // })
+//自定义函数用来覆盖原有的XHR行为（默认提交行为）
+function httpRequest(option) {
+//将图片存到数组中
+  fileList.value.push(option)
 }
 
 
 const updateSubmit = async () => {
-  // console.log(form.email + emailSuffix.value)
-  // console.log(form)
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    ElMessage.warning('用户未登录！')
-  }
+
+  // const currentUser = await getCurrentUser();
+  // if (!currentUser) {
+  //   ElMessage.warning('用户未登录！')
+  // }
+
+  let dataForm = new FormData();
+
+  fileList.value.forEach((it) => {
+    dataForm.append('image', it.file)
+  })
+
   await myAxios.post('/user/update', {
-    id: currentUser.id,
+    // id: currentUser.id,
     username: form.name,
     gender: form.gender,
     userBirthday: form.date,
     phone: form.phone,
     email: form.email + emailSuffix.value
+  })
+
+  // await myAxios.post('/user/upload', dataForm, {
+  //   headers: {
+  //     "Content-Type": "multipart/form-data"
+  //   }
+  // })
+
+  await myAxios({
+    method: 'POST',
+    url: 'http://localhost:9002/book/save',
+    data: dataForm,
+//设置请求参数的规则
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  }).then(response => {
+    console.log(response.data)
   })
 }
 
@@ -171,5 +185,14 @@ const onCancel = () => {
 .email_input {
   display: flex;
   align-items: center;
+}
+</style>
+<style>
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  text-align: center;
 }
 </style>
