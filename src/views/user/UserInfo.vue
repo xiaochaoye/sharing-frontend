@@ -98,9 +98,11 @@ const form = reactive<RuleForm>({
 //     {min: 8, max: 15, message: '密码长度在8~15位之间', trigger: 'change'},
 //   ],
 // })
+//定义一个响应式数组用来接收图片
+const fileList = ref([]);
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg' || 'image/png') {
+  if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'image/png') {
     ElMessage.error('图片上传格式为JPG或PNG!')
     return false
   } else if (rawFile.size / 1024 / 1024 > 2) {
@@ -110,13 +112,13 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   return true
 }
 
-//定义一个响应式数组用来接收图片
-const fileList = ref([]);
+
 
 //自定义函数用来覆盖原有的XHR行为（默认提交行为）
 function httpRequest(option) {
 //将图片存到数组中
   fileList.value.push(option)
+  return option
 }
 
 
@@ -188,7 +190,7 @@ const onCancel = () => {
 }
 </style>
 <style>
-.el-icon.avatar-uploader-icon {
+.el-icon .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
   width: 178px;
