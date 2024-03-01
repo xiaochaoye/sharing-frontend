@@ -13,10 +13,11 @@
         <el-upload
             :http-request="httpRequest"
             multiple
-            :show-file-list="true"
             list-type="picture-card"
+            :show-file-list="true"
             :limit="1"
-            :before-upload="beforeAvatarUpload"
+            :on-change="beforeAvatarUpload"
+            :on-preview="handlePictureCardPreview"
             :auto-upload="false"
         >
           <el-icon class="avatar-uploader-icon">
@@ -27,6 +28,12 @@
               限制上传1个文件，新文件将覆盖旧文件
             </div>
           </template>
+
+          <el-dialog v-model="dialogVisible">
+            <div class="dialog-content">
+              <img :src="dialogImageUrl" alt="Preview Image" class="preview-image"/>
+            </div>
+          </el-dialog>
         </el-upload>
 
       </el-form-item>
@@ -70,6 +77,7 @@
 import {reactive, ref} from 'vue'
 import {FormInstance, UploadProps, ElMessage} from 'element-plus'
 import myAxios from "../../plugins/myAxios.ts";
+import {Plus} from '@element-plus/icons-vue'
 import {getCurrentUser} from "../../config/user.ts";
 
 interface RuleForm {
@@ -98,29 +106,41 @@ const form = reactive<RuleForm>({
 //     {min: 8, max: 15, message: '密码长度在8~15位之间', trigger: 'change'},
 //   ],
 // })
+
+const dialogImageUrl = ref('')
+const dialogVisible = ref(false)
+
 //定义一个响应式数组用来接收图片
 const fileList = ref([]);
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'image/png') {
+  console.log('rawFile', rawFile)
+  if (rawFile.raw.type !== 'image/jpeg' && rawFile.raw.type !== 'image/png') {
     ElMessage.error('图片上传格式为JPG或PNG!')
     return false
   } else if (rawFile.size / 1024 / 1024 > 2) {
     ElMessage.error('图片不能大于2MB!')
     return false
   }
+
+  fileList.value = [rawFile.raw]
   return true
 }
 
-
-
-//自定义函数用来覆盖原有的XHR行为（默认提交行为）
-function httpRequest(option) {
-//将图片存到数组中
-  fileList.value.push(option)
-  return option
+const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
+  dialogImageUrl.value = uploadFile.url!
+  dialogVisible.value = true
 }
 
+const httpRequest = async () => {
+  let dataForm = new FormData();
+
+  fileList.value.forEach(it => {
+    dataForm.append('image', it)
+  })
+
+  await myAxios.post('/uer/upload',)
+}
 
 const updateSubmit = async () => {
 
@@ -129,38 +149,16 @@ const updateSubmit = async () => {
   //   ElMessage.warning('用户未登录！')
   // }
 
-  let dataForm = new FormData();
-
-  fileList.value.forEach((it) => {
-    dataForm.append('image', it.file)
-  })
-
   await myAxios.post('/user/update', {
     // id: currentUser.id,
     username: form.name,
     gender: form.gender,
     userBirthday: form.date,
     phone: form.phone,
-    email: form.email + emailSuffix.value
+    email: form.email + emailSuffix.value,
   })
 
-  // await myAxios.post('/user/upload', dataForm, {
-  //   headers: {
-  //     "Content-Type": "multipart/form-data"
-  //   }
-  // })
-
-  await myAxios({
-    method: 'POST',
-    url: 'http://localhost:9002/book/save',
-    data: dataForm,
-//设置请求参数的规则
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
-  }).then(response => {
-    console.log(response.data)
-  })
+  alert(fileList.value.length)
 }
 
 const onCancel = () => {
@@ -187,6 +185,15 @@ const onCancel = () => {
 .email_input {
   display: flex;
   align-items: center;
+}
+
+.dialog-content {
+  text-align: center; /* 居中显示图片 */
+}
+
+.preview-image {
+  max-width: 100%; /* 图片最大宽度为父元素宽度 */
+  max-height: 85vh; /* 图片最大高度为80%视窗高度 */
 }
 </style>
 <style>
