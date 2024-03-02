@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="user_content">
     <el-form :model="form" ref="infoFormRef" label-width="120px">
       <div style="font-size: 20px">修改信息</div>
       <el-divider/>
@@ -13,27 +13,19 @@
         <el-upload
             :http-request="httpRequest"
             multiple
-            list-type="picture-card"
+            list-type="picture"
             :show-file-list="true"
             :limit="1"
             :on-change="beforeAvatarUpload"
-            :on-preview="handlePictureCardPreview"
             :auto-upload="false"
+            accept=".jpg,.jpeg,.png"
         >
-          <el-icon class="avatar-uploader-icon">
-            <Plus/>
-          </el-icon>
+          <el-button type="primary">点击选择</el-button>
           <template #tip>
             <div class="el-upload__tip">
-              限制上传1个文件，新文件将覆盖旧文件
+              限制上传1个文件，新文件请删除后重新选择
             </div>
           </template>
-
-          <el-dialog v-model="dialogVisible">
-            <div class="dialog-content">
-              <img :src="dialogImageUrl" alt="Preview Image" class="preview-image"/>
-            </div>
-          </el-dialog>
         </el-upload>
 
       </el-form-item>
@@ -77,7 +69,6 @@
 import {reactive, ref} from 'vue'
 import {FormInstance, UploadProps, ElMessage} from 'element-plus'
 import myAxios from "../../plugins/myAxios.ts";
-import {Plus} from '@element-plus/icons-vue'
 import {getCurrentUser} from "../../config/user.ts";
 
 interface RuleForm {
@@ -107,9 +98,6 @@ const form = reactive<RuleForm>({
 //   ],
 // })
 
-const dialogImageUrl = ref('')
-const dialogVisible = ref(false)
-
 //定义一个响应式数组用来接收图片
 const fileList = ref([]);
 
@@ -122,14 +110,10 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
     ElMessage.error('图片不能大于2MB!')
     return false
   }
-
+  console.log('raw:', rawFile.raw)
   fileList.value = [rawFile.raw]
+  console.log('数组内容：', fileList)
   return true
-}
-
-const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
-  dialogImageUrl.value = uploadFile.url!
-  dialogVisible.value = true
 }
 
 const httpRequest = async () => {
@@ -148,6 +132,11 @@ const updateSubmit = async () => {
   // if (!currentUser) {
   //   ElMessage.warning('用户未登录！')
   // }
+  let dataForm = new FormData();
+
+  fileList.value.forEach(it => {
+    dataForm.append('image', it)
+  })
 
   await myAxios.post('/user/update', {
     // id: currentUser.id,
@@ -158,7 +147,9 @@ const updateSubmit = async () => {
     email: form.email + emailSuffix.value,
   })
 
-  alert(fileList.value.length)
+  await myAxios.post('/user/upload', dataForm)
+
+  alert(fileList)
 }
 
 const onCancel = () => {
@@ -171,7 +162,7 @@ const onCancel = () => {
 </script>
 
 <style lang="less">
-.content {
+.user_content {
   margin: 30px auto 0;
   background-color: #ffffff;
   height: calc(100% - 50px);
@@ -187,13 +178,13 @@ const onCancel = () => {
   align-items: center;
 }
 
-.dialog-content {
-  text-align: center; /* 居中显示图片 */
-}
+//.preview-image {
+//  max-width: 100%; /* 图片最大宽度为父元素宽度 */
+//  max-height: 85vh; /* 图片最大高度为80%视窗高度 */
+//}
 
-.preview-image {
-  max-width: 100%; /* 图片最大宽度为父元素宽度 */
-  max-height: 85vh; /* 图片最大高度为80%视窗高度 */
+.el-upload-list__item is-ready {
+  display: none;
 }
 </style>
 <style>

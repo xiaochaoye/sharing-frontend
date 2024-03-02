@@ -1,13 +1,12 @@
 <template>
-  <div class="content">
+  <div class="article_edit_content">
     <el-form :model="form" :rules="inputRules" ref="infoFormRef" label-width="120px">
-      <div style="font-size: 20px">修改信息</div>
+      <div style="font-size: 20px">编辑文章</div>
       <el-divider/>
 
       <el-form-item label="标题：" prop="title">
         <el-input v-model="form.title" clearable maxlength="60" show-word-limit placeholder="文章标题最多60字"/>
       </el-form-item>
-
       <el-form-item label="描述：" prop="description">
         <el-input v-model="form.description" clearable placeholder="请描述一下你的文章"/>
       </el-form-item>
@@ -15,7 +14,7 @@
       <el-form-item label="内容：">
         <v-md-editor v-model="form.content" :disabled-menus="[]" height="100%" @save="save" default-show-toc="true"
                      mode="editable" toc-nav-position-right="true" :include-level="[1, 2, 3, 4, 5, 6]"
-                     @upload-image="testing"/>
+                     @upload-image="uploading"/>
       </el-form-item>
 
       <el-form-item>
@@ -58,34 +57,7 @@ const inputRules = reactive<FormRules<RuleForm>>({
   ],
 })
 
-const text = ref(`
-### 右上角全屏编写更方便
-#### 除了已经列举出来的功能外还支持 ***emoji***、***katex***、***mermaid***、***todo-list***、***tip*** 等功能
----
-:smile: :copyright:
----
-$$\\sum_{i=1}^n a_i=0$$
----
-\`\`\`mermaid
-graph LR
-A --- B
-B-->C[fa:fa-ban forbidden]
-B-->D(fa:fa-spinner);
-\`\`\`
----
-- [x] Task
----
-::: details
-  这是一个详情块，在 IE / Edge 中不生效
-:::
-::: tip 自定义标题
-  你也可以自定义块中的标题
-:::
----
-`)
-
 const save = () => {
-  console.log(form.content)
   const filePath = "output.txt"
   const blob = new Blob([form.content], {type: 'text/plain'});
   const downloadLink = document.createElement('a');
@@ -94,16 +66,30 @@ const save = () => {
   downloadLink.click();
 }
 
-const testing = (event, insertImage, files) => {
-  console.log(files)
-  insertImage({
-    url:
-        'https://tse2-mm.cn.bing.net/th/id/OIP-C._kg3QODJ9oexfLJEmQePzgHaGr?rs=1&pid=ImgDetMain',
-    desc: '小鸡子',
-    // 回显后端返回的图片路径和描述
-    // width: 'auto',
-    // height: 'auto',
-  });
+const uploading = (event, insertImage, files) => {
+  console.log(files[0])
+  let dataForm = new FormData();
+
+  dataForm.append('image', files[0])
+
+  myAxios.post('/article/image', dataForm)
+      .then(response => {
+        insertImage({
+          url: response.data,
+          desc: files[0].name,
+        }),
+            (error: any) => {
+              ElMessage.error('请求失败了，', error.message)
+            }
+      })
+  // insertImage({
+  //   url:
+  //       'https://tse2-mm.cn.bing.net/th/id/OIP-C._kg3QODJ9oexfLJEmQePzgHaGr?rs=1&pid=ImgDetMain',
+  //   desc: files.name,
+  //   // 回显后端返回的图片路径和描述
+  //   // width: 'auto',
+  //   // height: 'auto',
+  // });
 }
 
 const onCancel = () => {
@@ -117,7 +103,7 @@ const onSubmit = async () => {
   if (!currentUser) {
     ElMessage.warning('用户未登录！')
   }
-  
+
 }
 
 </script>
@@ -127,7 +113,7 @@ const onSubmit = async () => {
   height: 100%;
 }
 
-.content {
+.article_edit_content {
   width: 60%;
   height: calc(100% - 30px);
   background-color: #ffffff;

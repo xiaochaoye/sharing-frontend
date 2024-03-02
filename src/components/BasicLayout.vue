@@ -3,8 +3,8 @@
     <!-- 头部-->
     <div class="top-content">
       <div class="icon">
-        <img src="/src/assets/knowledge.png">
-        <span style="text-align: center">知识分享</span>
+        <el-image src="/src/assets/knowledge.png" @click="goToHomePage"/>
+        <el-link style="text-align: center; font-size: 20px" @click="goToHomePage" :underline="false">知识分享</el-link>
       </div>
       <el-menu
           :default-active="routes"
@@ -86,6 +86,10 @@ const choosePage = (command: any) => {
     router.push(command)
   }
 }
+
+const goToHomePage = () => {
+  router.push('/main');
+};
 </script>
 
 <style lang="less" scoped>
