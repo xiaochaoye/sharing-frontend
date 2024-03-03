@@ -1,6 +1,6 @@
 <template>
   <div class="article_list_content">
-    <a-card hoverable style="width: 300px">
+    <a-card v-for="card in cards" :key="card.id" hoverable style="width: 300px">
       <template #cover>
         <img
             alt="example"
@@ -12,7 +12,7 @@
         <edit-outlined key="edit"/>
         <ellipsis-outlined key="ellipsis"/>
       </template>
-      <a-card-meta :title="articleTitle" :description="articleDescription">
+      <a-card-meta :title="card.title" :description="card.description">
         <template #avatar>
           <a-avatar src="https://joeschmoe.io/api/v1/random"/>
         </template>
@@ -23,11 +23,25 @@
 
 <script setup lang="ts">
 import {SettingOutlined, EditOutlined, EllipsisOutlined} from '@ant-design/icons-vue';
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
+import myAxios from '../../plugins/myAxios';
 
-const articleTitle = ref('')
-const articleDescription = ref('')
+//todo 获取卡片数据后端方法
+// 定义响应式数据来存储卡片信息
+const cards = ref([]);
 
+// 定义获取卡片数据的方法
+async function fetchCards() {
+  try {
+    const response = await myAxios.get('/api/cards');
+    cards.value = response.data;
+  } catch (error) {
+    console.error('获取卡片数据失败:', error);
+  }
+}
+
+// 在组件挂载后获取卡片数据
+onMounted(fetchCards);
 
 </script>
 
