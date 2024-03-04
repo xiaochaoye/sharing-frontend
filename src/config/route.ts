@@ -4,6 +4,11 @@ import ShowArticle from "../views/articles/ShowArticle.vue";
 import UserInfo from "../views/user/UserInfo.vue";
 import ArticleList from "../views/articles/ArticleList.vue";
 
+/**
+ *    @author 超
+ *    定义和导出页面路由
+ */
+
 const routes = [
       {path: '/login', title: '登录注册页', component: Login},
       {path: '/write', title: '写文章', component: ArticleEditor},

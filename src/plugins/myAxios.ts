@@ -1,6 +1,11 @@
 import axios from "axios";
 import {notification} from "ant-design-vue";
 
+/**
+ *    @author 超
+ *    封装自己的 axios 请求
+ */
+
 const myAxios = axios.create({
       baseURL: 'http://localhost:8080/api',
       // baseURL: 'http://127.0.0.1:4523/m1/2639333-0-default/api'

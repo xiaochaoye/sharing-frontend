@@ -1,11 +1,11 @@
 <template>
   <div class="user_content">
-    <el-form :model="form" ref="infoFormRef" label-width="120px">
+    <el-form :model="form" :rules="inputRules" ref="infoFormRef" label-width="120px">
       <div style="font-size: 20px">修改信息</div>
       <el-divider/>
 
-      <el-form-item label="用户昵称">
-        <el-input v-model="form.name" clearable maxlength="10" show-word-limit/>
+      <el-form-item label="用户昵称" prop="name">
+        <el-input v-model="form.name" clearable maxlength="10" show-word-limit placeholder="让他人记住你"/>
       </el-form-item>
 
       <el-form-item label="头像上传">
@@ -67,7 +67,7 @@
 
 <script lang="ts" setup>
 import {reactive, ref} from 'vue'
-import {FormInstance, UploadProps, ElMessage} from 'element-plus'
+import {FormInstance, UploadProps, ElMessage, FormRules} from 'element-plus'
 import myAxios from "../../plugins/myAxios.ts";
 import {getCurrentUser} from "../../config/user.ts";
 
@@ -91,16 +91,16 @@ const form = reactive<RuleForm>({
   email: ''
 })
 
-// const inputRules = reactive<FormRules<RuleForm>>({
-//   password: [
-//     {required: true, message: '请输入密码', trigger: 'change'},
-//     {min: 8, max: 15, message: '密码长度在8~15位之间', trigger: 'change'},
-//   ],
-// })
+const inputRules = reactive<FormRules<RuleForm>>({
+  name: [
+    {required: true, message: '请输入昵称', trigger: 'change'},
+  ],
+})
 
-//定义一个响应式数组用来接收图片
+// 定义一个响应式数组用来接收图片
 const fileList = ref([]);
 
+// 上传前校验格式和大小方法
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   console.log('rawFile', rawFile)
   if (rawFile.raw.type !== 'image/jpeg' && rawFile.raw.type !== 'image/png') {
@@ -116,6 +116,7 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   return true
 }
 
+// 覆盖默认的 Xhr 行为，允许自行实现上传文件的请求（无作用）
 const httpRequest = async () => {
   let dataForm = new FormData();
 
@@ -126,6 +127,7 @@ const httpRequest = async () => {
   await myAxios.post('/uer/upload',)
 }
 
+// 提交更新方法
 const updateSubmit = async () => {
 
   // const currentUser = await getCurrentUser();

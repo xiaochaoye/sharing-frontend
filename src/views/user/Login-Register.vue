@@ -52,8 +52,10 @@ import {useRouter} from 'vue-router';
 import {message} from 'ant-design-vue';
 import myAxios from "../../plugins/myAxios.ts";
 
+// 注册框是否可见的变量
 const isVisible = ref(true)
 
+// 注册框展示方法
 const showMe = () => {
   isVisible.value = !isVisible.value;
 }
@@ -83,6 +85,7 @@ const registerForm: formStateRegister = reactive({
   check: ''
 });
 
+// 账号密码校验规则
 const inputRules = {
   username: [
     {
@@ -104,6 +107,7 @@ const inputRules = {
   ],
 };
 
+// 登录方法
 const loginSubmit = async () => {
   loginFormRef.value.validate().then(() => {
     myAxios.post('/user/login', {
@@ -122,7 +126,7 @@ const loginSubmit = async () => {
   });
 };
 
-
+// 注册方法
 const registerSubmit = async () => {
   registerFromRef.value.validate().then(() => {
     myAxios.post('/user/register', {

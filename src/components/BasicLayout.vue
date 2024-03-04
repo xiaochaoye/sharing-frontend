@@ -21,7 +21,6 @@
         <el-menu-item index="/login">登录页</el-menu-item>
       </el-menu>
       <div>
-        <!--        <input type="text" placeholder="请输入内容"/>-->
         <el-dropdown @command="choosePage">
           <el-avatar shape="square" size="medium"
                      :src="avatarImage"/>
@@ -59,12 +58,14 @@ const router = useRouter();
 
 const avatarImage = ref<string>('https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png')
 
+// 获取头像图片方法
 const myAvatarImage = async () => {
   const loginUser = await getCurrentUser();
   console.log('loginUser:', loginUser)
   return loginUser ? loginUser.avatarUrl : 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png';
 }
 
+// 组件挂载后执行异步操作,用以获取头像图片
 onMounted(async () => {
   try {
     const result = await myAvatarImage();
@@ -77,6 +78,8 @@ onMounted(async () => {
 })
 
 // console.log(myAvatarImage);
+
+// 切换界面的方法
 const choosePage = (command: any) => {
   if (command == "/logout") {
     ElMessage.success("退出成功")
@@ -87,6 +90,7 @@ const choosePage = (command: any) => {
   }
 }
 
+// 回到主页方法
 const goToHomePage = () => {
   router.push('/main');
 };

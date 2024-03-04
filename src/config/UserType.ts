@@ -1,5 +1,6 @@
 /**
- *  用户类别
+ *    @author 超
+ *    用户类别
  */
 export type UserType = {
       id: number;

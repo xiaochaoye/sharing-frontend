@@ -1,5 +1,6 @@
 /**
- *  当前用户的 get 和 set 方法
+ *    @author 超
+ *    当前用户的 get 和 set 方法
  */
 import {UserType} from "./UserType";
 

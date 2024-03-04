@@ -40,12 +40,14 @@ interface RuleForm {
 
 const infoFormRef = ref<FormInstance>()
 
+// 响应式表单
 const form = reactive<RuleForm>({
   title: '',
   description: '',
   content: '### 右上角全屏编写更方便\n#### 除了已经列举出来的功能外还支持 ***emoji***、***katex***、***mermaid***、***todo-list***、***tip*** 等功能'
 })
 
+// 表单校验规则
 const inputRules = reactive<FormRules<RuleForm>>({
   title: [
     {required: true, message: '请输入标题', trigger: 'change'},
@@ -57,6 +59,7 @@ const inputRules = reactive<FormRules<RuleForm>>({
   ],
 })
 
+// 保存文本方法（测试）
 const save = () => {
   const filePath = "output.txt"
   const blob = new Blob([form.content], {type: 'text/plain'});
@@ -66,6 +69,7 @@ const save = () => {
   downloadLink.click();
 }
 
+// 文章中上传图片和回显图片链接方法
 const uploading = (event, insertImage, files) => {
   console.log(files[0])
   let dataForm = new FormData();
@@ -92,12 +96,14 @@ const uploading = (event, insertImage, files) => {
   // });
 }
 
+// 重置表单内容
 const onCancel = () => {
   form.title = ''
   form.description = ''
   form.content = ''
 }
 
+// 提交方法
 const onSubmit = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
