@@ -123,7 +123,7 @@ onMounted(fetchCards);
 <style scoped lang="less">
 .article_list_content {
   margin: 30px auto 0;
-  background-color: #ffffff;
+  background-color: #ededed;
   height: calc(100% - 50px);
   padding: 20px;
   box-sizing: border-box;

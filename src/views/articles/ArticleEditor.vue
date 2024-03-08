@@ -11,6 +11,24 @@
         <el-input v-model="form.description" clearable placeholder="请描述一下你的文章"/>
       </el-form-item>
 
+      <el-form-item label="封面上传">
+        <el-upload
+            list-type="picture"
+            :show-file-list="true"
+            :limit="1"
+            :on-change="beforeAvatarUpload"
+            :auto-upload="false"
+            accept=".jpg,.jpeg,.png"
+        >
+          <el-button type="primary">点击选择</el-button>
+          <template #tip>
+            <div class="el-upload__tip">
+              限制上传1个文件，新文件请删除后重新选择
+            </div>
+          </template>
+        </el-upload>
+      </el-form-item>
+
       <el-form-item label="内容：">
         <v-md-editor v-model="form.content" :disabled-menus="[]" height="100%" @save="save" default-show-toc="true"
                      mode="editable" toc-nav-position-right="true" :include-level="[1, 2, 3, 4, 5, 6]"
@@ -28,7 +46,7 @@
 
 <script setup lang="ts">
 import {reactive, ref} from "vue";
-import {ElMessage, FormInstance, FormRules} from "element-plus";
+import {ElMessage, FormInstance, FormRules, UploadProps} from "element-plus";
 import {getCurrentUser} from "../../config/user.ts";
 import myAxios from "../../plugins/myAxios.ts";
 
@@ -39,6 +57,25 @@ interface RuleForm {
 }
 
 const infoFormRef = ref<FormInstance>()
+
+// 定义一个响应式数组用来接收图片
+const fileList = ref([]);
+
+// 上传前校验格式和大小方法
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  console.log('rawFile', rawFile)
+  if (rawFile.raw.type !== 'image/jpeg' && rawFile.raw.type !== 'image/png') {
+    ElMessage.error('图片上传格式为JPG或PNG!')
+    return Promise.reject(false)
+  } else if (rawFile.size / 1024 / 1024 > 2) {
+    ElMessage.error('图片不能大于2MB!')
+    return false
+  }
+  console.log('raw:', rawFile.raw)
+  fileList.value = [rawFile.raw]
+  console.log('数组内容：', fileList)
+  return true
+}
 
 // 响应式表单
 const form = reactive<RuleForm>({
@@ -76,19 +113,20 @@ const uploading = (event, insertImage, files) => {
 
   dataForm.append('image', files[0])
 
-  myAxios.post('/article/image', dataForm)
+  myAxios.post('/file/uploadImage', dataForm)
       .then(response => {
         insertImage({
           url: response.data,
           desc: files[0].name,
+          width: 'auto',
+          height: 'auto'
         }),
             (error: any) => {
               ElMessage.error('请求失败了，', error.message)
             }
       })
   // insertImage({
-  //   url:
-  //       'https://tse2-mm.cn.bing.net/th/id/OIP-C._kg3QODJ9oexfLJEmQePzgHaGr?rs=1&pid=ImgDetMain',
+  //   url:resp,
   //   desc: files.name,
   //   // 回显后端返回的图片路径和描述
   //   // width: 'auto',
@@ -109,7 +147,15 @@ const onSubmit = async () => {
   if (!currentUser) {
     ElMessage.warning('用户未登录！')
   }
+  let dataForm = new FormData();
 
+  fileList.value.forEach(it => {
+    dataForm.append('image', it)
+  })
+  myAxios.post('/file/uploadImage', dataForm)
+      .then(response => {
+        ElMessage.error('请求失败了，', response.message)
+      })
 }
 
 </script>

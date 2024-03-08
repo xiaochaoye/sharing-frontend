@@ -16,7 +16,6 @@
           router
       >
         <el-menu-item index="/write">写文章页</el-menu-item>
-        <el-menu-item index="/read">读文章页</el-menu-item>
         <el-menu-item index="/edit">编辑个人信息</el-menu-item>
         <el-menu-item index="/login">登录页</el-menu-item>
       </el-menu>
@@ -25,10 +24,11 @@
           <el-avatar shape="square" size="medium"
                      :src="avatarImage"/>
           <template #dropdown>
-            <el-dropdown-menu>
+            <el-dropdown-menu v-if="showMe">
               <el-dropdown-item :icon="UserFilled" command="/edit">个人主页</el-dropdown-item>
               <el-dropdown-item :icon="Promotion" command="/logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
+            <el-dropdown v-if="showMe === false">登录享用更多功能</el-dropdown>
           </template>
         </el-dropdown>
       </div>
@@ -58,9 +58,14 @@ const router = useRouter();
 
 const avatarImage = ref<string>('https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png')
 
-// 获取头像图片方法
+const showMe = ref(false)
+
+// 获取头像图片和是否显示头像下拉方法
 const myAvatarImage = async () => {
   const loginUser = await getCurrentUser();
+  if (loginUser !== null) {
+    showMe.value = true;
+  }
   console.log('loginUser:', loginUser)
   return loginUser ? loginUser.avatarUrl : 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png';
 }
@@ -77,8 +82,6 @@ onMounted(async () => {
   }
 })
 
-// console.log(myAvatarImage);
-
 // 切换界面的方法
 const choosePage = (command: any) => {
   if (command == "/logout") {
@@ -94,6 +97,8 @@ const choosePage = (command: any) => {
 const goToHomePage = () => {
   router.push('/main');
 };
+
+
 </script>
 
 <style lang="less" scoped>

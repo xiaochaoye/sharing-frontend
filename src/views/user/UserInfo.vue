@@ -27,7 +27,6 @@
             </div>
           </template>
         </el-upload>
-
       </el-form-item>
 
       <el-form-item label="性别">
@@ -105,7 +104,7 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   console.log('rawFile', rawFile)
   if (rawFile.raw.type !== 'image/jpeg' && rawFile.raw.type !== 'image/png') {
     ElMessage.error('图片上传格式为JPG或PNG!')
-    return false
+    return Promise.reject(false)
   } else if (rawFile.size / 1024 / 1024 > 2) {
     ElMessage.error('图片不能大于2MB!')
     return false
@@ -147,11 +146,19 @@ const updateSubmit = async () => {
     userBirthday: form.date,
     phone: form.phone,
     email: form.email + emailSuffix.value,
+  }).then(response => {
+    if (response.code === 200) {
+      ElMessage.success("信息更新成功")
+    } else {
+      ElMessage.error(response.description)
+    }
   })
 
-  await myAxios.post('/user/upload', dataForm)
-
-  alert(fileList)
+  await myAxios.post('/file/uploadAvatar', dataForm).then(response => {
+    if (response.code !== 200) {
+      ElMessage.error(response.description)
+    }
+  })
 }
 
 const onCancel = () => {

@@ -117,7 +117,7 @@ const loginSubmit = async () => {
     }).then((res) => {
       console.log(res);
       if (res.code === 0 && res.data) {
-        router.push('/write');
+        router.push('/main');
         message.success('登录成功')
       } else {
         message.error(res.description);
