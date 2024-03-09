@@ -13,13 +13,22 @@
         />
       </template>
       <template #actions>
-        <setting-outlined key="setting"/>
-        <edit-outlined key="edit"/>
-        <ellipsis-outlined key="ellipsis"/>
+        <a-space>
+          <a-button type="success" v-if="clickCount % 2 == 0" :icon="h(LikeOutlined)" @click="increaseLike()"
+                    :disabled="isDisabled">
+            {{ likeCount }}
+          </a-button>
+          <a-button type="success" v-if="clickCount % 2 !== 0" :icon="h(LikeTwoTone)" @click="cancelLike()"
+                    :disabled="isDisabled">
+            {{ likeCount }}
+          </a-button>
+        </a-space>
+        <a-button type="success" :icon="h(ShareAltOutlined)"/>
+        <a-button type="success" :icon="h(EllipsisOutlined)"/>
       </template>
       <a-card-meta :description="truncatedDescription(card.description)">
         <template #title>
-          <a-typography-link @click="onClick(card.id)">{{ card.title }}</a-typography-link>
+          <a-typography-title :level="5" ellipsis="" @click="onClick(card.id)">{{ card.title }}</a-typography-title>
         </template>
         <template #avatar>
           <a-avatar :size="50" style="color: #f56a00; background-color: #fde3cf">{{ card.author.charAt(0) }}</a-avatar>
@@ -31,12 +40,39 @@
 </template>
 
 <script setup lang="ts">
-import {SettingOutlined, EditOutlined, EllipsisOutlined} from '@ant-design/icons-vue';
-import {onMounted, ref} from "vue";
+import {LikeOutlined, ShareAltOutlined, EllipsisOutlined, LikeTwoTone} from '@ant-design/icons-vue';
+import {onMounted, ref, h} from "vue";
 import myAxios from '../../plugins/myAxios';
 import {useRouter} from "vue-router";
 
 const router = useRouter();
+
+const isDisabled = ref(false);
+
+// 记录当前点击次数，开始为 1， 数据量不大，采用点击一次点赞，再点一次取消点赞，记录按钮延时为 1s。
+const clickCount = ref(0)
+
+// todo 从表中获取这个文章的点赞数
+const likeCount = ref(0);
+
+// todo 点赞需要在表里加 1，取消点赞就减 1
+const increaseLike = () => {
+  likeCount.value++;
+  clickCount.value++;
+  isDisabled.value = true;
+  setTimeout(() => {
+    isDisabled.value = false;
+  }, 1000)
+}
+
+const cancelLike = () => {
+  likeCount.value--;
+  clickCount.value--;
+  isDisabled.value = true;
+  setTimeout(() => {
+    isDisabled.value = false;
+  }, 1000)
+}
 
 //todo 获取卡片数据后端方法
 // 定义响应式数据来存储卡片信息
@@ -89,7 +125,7 @@ const cards = ref([
 // 截断超过 10 个字的文章描述
 const truncatedDescription = (description: string) => {
   if (description.length > 10) {
-    return description.substring(0, 9) + "..."
+    return description.substring(0, 5) + "..."
   } else {
     return description;
   }
