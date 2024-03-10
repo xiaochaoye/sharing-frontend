@@ -143,19 +143,27 @@ const onCancel = () => {
 
 // 提交方法
 const onSubmit = async () => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    ElMessage.warning('用户未登录！')
-  }
+  // const currentUser = await getCurrentUser();
+  // if (!currentUser) {
+  //   ElMessage.warning('用户未登录！')
+  // }
   let dataForm = new FormData();
 
   fileList.value.forEach(it => {
     dataForm.append('image', it)
   })
-  myAxios.post('/file/uploadImage', dataForm)
-      .then(response => {
-        ElMessage.error('请求失败了，', response.message)
-      })
+
+  const coverUrl = (await myAxios.post('/file/uploadImage', dataForm)).data
+      
+  myAxios.post('/article/upload', {
+    title: form.title,
+    description:form.description,
+    cover: coverUrl,
+    content: form.content,
+    isDisabled: false,
+    clickCount: 0,
+    likeCount: 0
+  })
 }
 
 </script>

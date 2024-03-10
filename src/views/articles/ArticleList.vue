@@ -14,13 +14,13 @@
       </template>
       <template #actions>
         <a-space>
-          <a-button type="success" v-if="clickCount % 2 == 0" :icon="h(LikeOutlined)" @click="increaseLike()"
-                    :disabled="isDisabled">
-            {{ likeCount }}
+          <a-button type="success" v-if="card.clickCount % 2 == 0" :icon="h(LikeOutlined)" @click="increaseLike(card)"
+                    :disabled="card.isDisabled">
+            {{ card.likeCount }}
           </a-button>
-          <a-button type="success" v-if="clickCount % 2 !== 0" :icon="h(LikeTwoTone)" @click="cancelLike()"
-                    :disabled="isDisabled">
-            {{ likeCount }}
+          <a-button type="success" v-if="card.clickCount % 2 !== 0" :icon="h(LikeTwoTone)" @click="cancelLike(card)"
+                    :disabled="card.isDisabled">
+            {{ card.likeCount }}
           </a-button>
         </a-space>
         <a-button type="success" :icon="h(ShareAltOutlined)"/>
@@ -47,30 +47,24 @@ import {useRouter} from "vue-router";
 
 const router = useRouter();
 
-const isDisabled = ref(false);
-
-// 记录当前点击次数，开始为 1， 数据量不大，采用点击一次点赞，再点一次取消点赞，记录按钮延时为 1s。
-const clickCount = ref(0)
-
+// 记录当前点击次数，开始为 1， 数据量不大，采用点击一次点赞，再点一次取消点赞，记录按钮延时为 1s,标志位为isDisabled。
 // todo 从表中获取这个文章的点赞数
-const likeCount = ref(0);
-
 // todo 点赞需要在表里加 1，取消点赞就减 1
-const increaseLike = () => {
-  likeCount.value++;
-  clickCount.value++;
-  isDisabled.value = true;
+const increaseLike = (index) => {
+  index.likeCount++;
+  index.clickCount++;
+  index.isDisabled = true;
   setTimeout(() => {
-    isDisabled.value = false;
+    index.isDisabled = false;
   }, 1000)
 }
 
-const cancelLike = () => {
-  likeCount.value--;
-  clickCount.value--;
-  isDisabled.value = true;
+const cancelLike = (index) => {
+  index.likeCount--;
+  index.clickCount--;
+  index.isDisabled = true;
   setTimeout(() => {
-    isDisabled.value = false;
+    index.isDisabled = false;
   }, 1000)
 }
 
@@ -83,42 +77,60 @@ const cards = ref([
     title: "第一篇文章",
     description: "无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1",
     author: "许曜麟",
-    cover: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
+    cover: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
+    isDisabled: false,
+    clickCount: 0,
+    likeCount: 0
   },
   {
     id: 2,
     title: "第二篇文章",
     description: "无需多言2",
     author: "王超",
-    cover: "https://aliyuncdn.antdv.com/vue.png"
+    cover: "https://aliyuncdn.antdv.com/vue.png",
+    isDisabled: false,
+    clickCount: 0,
+    likeCount: 0
   },
   {
     id: 3,
     title: "第三篇文章",
     description: "无需多言3",
     author: "陈俊渝",
-    cover: "https://aliyuncdn.antdv.com/logo.png"
+    cover: "https://aliyuncdn.antdv.com/logo.png",
+    isDisabled: false,
+    clickCount: 0,
+    likeCount: 0
   },
   {
     id: 4,
     title: "第四篇文章",
     description: "无需多言4",
     author: "杨曜伟",
-    cover: "https://avatars.githubusercontent.com/u/31885971?v=4"
+    cover: "https://avatars.githubusercontent.com/u/31885971?v=4",
+    isDisabled: false,
+    clickCount: 0,
+    likeCount: 0
   },
   {
     id: 5,
     title: "第五篇文章",
     description: "无需多言5",
     author: "陈国汉",
-    cover: "https://avatars.githubusercontent.com/u/31885971?v=4"
+    cover: "https://avatars.githubusercontent.com/u/31885971?v=4",
+    isDisabled: false,
+    clickCount: 0,
+    likeCount: 0
   },
   {
     id: 6,
     title: "第六篇文章",
     description: "无需多言6",
     author: "邓丽雯",
-    cover: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+    cover: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
+    isDisabled: false,
+    clickCount: 0,
+    likeCount: 0
   },
 ]);
 
@@ -152,7 +164,6 @@ const onClick = (id: any) => {
 
 // 在组件挂载后获取卡片数据
 onMounted(fetchCards);
-// onCreated(){}
 
 </script>
 
