@@ -2,11 +2,12 @@
   <div class="article_list_content">
     <a-card class="card-item" v-for="card in cards" :key="card.id" hoverable style="width: 200px; height: 340px">
       <template #cover>
-        <img v-if="card.cover == null" style="width: 100%; max-height: 100px; display: inline-block"
+        <img v-if="card.cover == null || card.cover == ''" style="width: 100%; height: 150px; display: inline-block"
              alt="默认封面"
              src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
         />
         <img
+            v-else
             alt="文章封面"
             style="width: 100%; max-height: 150px; display: inline-block"
             :src="card.cover"
@@ -51,6 +52,9 @@ const router = useRouter();
 // todo 从表中获取这个文章的点赞数
 // todo 点赞需要在表里加 1，取消点赞就减 1
 const increaseLike = (index) => {
+  myAxios.post('/article/like', {
+    id: index.id
+  })
   index.likeCount++;
   index.clickCount++;
   index.isDisabled = true;
@@ -70,69 +74,69 @@ const cancelLike = (index) => {
 
 //todo 获取卡片数据后端方法
 // 定义响应式数据来存储卡片信息
-// const cards = ref([]);
-const cards = ref([
-  {
-    id: 1,
-    title: "第一篇文章",
-    description: "无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1",
-    author: "许曜麟",
-    cover: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
-    isDisabled: false,
-    clickCount: 0,
-    likeCount: 0
-  },
-  {
-    id: 2,
-    title: "第二篇文章",
-    description: "无需多言2",
-    author: "王超",
-    cover: "https://aliyuncdn.antdv.com/vue.png",
-    isDisabled: false,
-    clickCount: 0,
-    likeCount: 0
-  },
-  {
-    id: 3,
-    title: "第三篇文章",
-    description: "无需多言3",
-    author: "陈俊渝",
-    cover: "https://aliyuncdn.antdv.com/logo.png",
-    isDisabled: false,
-    clickCount: 0,
-    likeCount: 0
-  },
-  {
-    id: 4,
-    title: "第四篇文章",
-    description: "无需多言4",
-    author: "杨曜伟",
-    cover: "https://avatars.githubusercontent.com/u/31885971?v=4",
-    isDisabled: false,
-    clickCount: 0,
-    likeCount: 0
-  },
-  {
-    id: 5,
-    title: "第五篇文章",
-    description: "无需多言5",
-    author: "陈国汉",
-    cover: "https://avatars.githubusercontent.com/u/31885971?v=4",
-    isDisabled: false,
-    clickCount: 0,
-    likeCount: 0
-  },
-  {
-    id: 6,
-    title: "第六篇文章",
-    description: "无需多言6",
-    author: "邓丽雯",
-    cover: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    isDisabled: false,
-    clickCount: 0,
-    likeCount: 0
-  },
-]);
+const cards = ref([]);
+// const cards = ref([
+//   {
+//     id: 1,
+//     title: "第一篇文章",
+//     description: "无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1",
+//     author: "许曜麟",
+//     cover: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
+//     isDisabled: false,
+//     clickCount: 0,
+//     likeCount: 0
+//   },
+//   {
+//     id: 2,
+//     title: "第二篇文章",
+//     description: "无需多言2",
+//     author: "王超",
+//     cover: "https://aliyuncdn.antdv.com/vue.png",
+//     isDisabled: false,
+//     clickCount: 0,
+//     likeCount: 0
+//   },
+//   {
+//     id: 3,
+//     title: "第三篇文章",
+//     description: "无需多言3",
+//     author: "陈俊渝",
+//     cover: "https://aliyuncdn.antdv.com/logo.png",
+//     isDisabled: false,
+//     clickCount: 0,
+//     likeCount: 0
+//   },
+//   {
+//     id: 4,
+//     title: "第四篇文章",
+//     description: "无需多言4",
+//     author: "杨曜伟",
+//     cover: "https://avatars.githubusercontent.com/u/31885971?v=4",
+//     isDisabled: false,
+//     clickCount: 0,
+//     likeCount: 0
+//   },
+//   {
+//     id: 5,
+//     title: "第五篇文章",
+//     description: "无需多言5",
+//     author: "陈国汉",
+//     cover: "https://avatars.githubusercontent.com/u/31885971?v=4",
+//     isDisabled: false,
+//     clickCount: 0,
+//     likeCount: 0
+//   },
+//   {
+//     id: 6,
+//     title: "第六篇文章",
+//     description: "无需多言6",
+//     author: "邓丽雯",
+//     cover: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
+//     isDisabled: false,
+//     clickCount: 0,
+//     likeCount: 0
+//   },
+// ]);
 
 // 截断超过 10 个字的文章描述
 const truncatedDescription = (description: string) => {
@@ -143,11 +147,15 @@ const truncatedDescription = (description: string) => {
   }
 }
 
+
 // 定义获取卡片数据的方法
 async function fetchCards() {
   try {
-    const response = await myAxios.get('/api/cards');
+    const response = await myAxios.get('/article/cards');
     cards.value = response.data;
+    console.log("类型为：", typeof response.data);
+    console.log("cards数组的值为:", cards.value)
+    console.log("cards数组的长度为：", cards.value.length)
   } catch (error) {
     console.error('获取卡片数据失败:', error);
   }

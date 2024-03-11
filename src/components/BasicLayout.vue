@@ -18,6 +18,7 @@
         <el-menu-item index="/write">写文章页</el-menu-item>
         <el-menu-item index="/edit">编辑个人信息</el-menu-item>
         <el-menu-item index="/login">登录页</el-menu-item>
+        <el-menu-item index="/chat">聊聊天</el-menu-item>
       </el-menu>
       <div>
         <el-dropdown @command="choosePage">

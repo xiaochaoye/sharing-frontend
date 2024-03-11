@@ -116,6 +116,7 @@ const uploading = (event, insertImage, files) => {
   myAxios.post('/file/uploadImage', dataForm)
       .then(response => {
         insertImage({
+          // 回显后端返回的图片路径和描述
           url: response.data,
           desc: files[0].name,
           width: 'auto',
@@ -125,13 +126,6 @@ const uploading = (event, insertImage, files) => {
               ElMessage.error('请求失败了，', error.message)
             }
       })
-  // insertImage({
-  //   url:resp,
-  //   desc: files.name,
-  //   // 回显后端返回的图片路径和描述
-  //   // width: 'auto',
-  //   // height: 'auto',
-  // });
 }
 
 // 重置表单内容
@@ -143,21 +137,29 @@ const onCancel = () => {
 
 // 提交方法
 const onSubmit = async () => {
-  // const currentUser = await getCurrentUser();
-  // if (!currentUser) {
-  //   ElMessage.warning('用户未登录！')
-  // }
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    ElMessage.warning('用户未登录！')
+  }
   let dataForm = new FormData();
 
   fileList.value.forEach(it => {
     dataForm.append('image', it)
   })
 
-  const coverUrl = (await myAxios.post('/file/uploadImage', dataForm)).data
-      
-  myAxios.post('/article/upload', {
+  let coverUrl: null
+
+  try {
+    coverUrl = (await myAxios.post('/file/uploadImage', dataForm)).data
+  } catch (error) {
+    console.log(error)
+    coverUrl = null;
+  }
+
+  await myAxios.post('/article/upload', {
+    author: currentUser.username,
     title: form.title,
-    description:form.description,
+    description: form.description,
     cover: coverUrl,
     content: form.content,
     isDisabled: false,
