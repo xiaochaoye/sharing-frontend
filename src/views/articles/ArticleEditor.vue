@@ -49,6 +49,9 @@ import {reactive, ref} from "vue";
 import {ElMessage, FormInstance, FormRules, UploadProps} from "element-plus";
 import {getCurrentUser} from "../../config/user.ts";
 import myAxios from "../../plugins/myAxios.ts";
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 
 interface RuleForm {
   title: string
@@ -158,6 +161,7 @@ const onSubmit = async () => {
 
   await myAxios.post('/article/upload', {
     author: currentUser.username,
+    authorId: currentUser.id,
     title: form.title,
     description: form.description,
     cover: coverUrl,
@@ -165,6 +169,11 @@ const onSubmit = async () => {
     isDisabled: false,
     clickCount: 0,
     likeCount: 0
+  }).then(response => {
+    if (response.code === 0) {
+      ElMessage.success("上传成功！")
+      router.push('/main')
+    }
   })
 }
 

@@ -7,7 +7,9 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import VueMarkdownEditor from '@kangc/v-md-editor';
 import VMdPreview from '@kangc/v-md-editor/lib/preview'
+import VMdPreviewHtml from '@kangc/v-md-editor/lib/preview-html';
 import '@kangc/v-md-editor/lib/style/base-editor.css';
+import '@kangc/v-md-editor/lib/style/preview-html.css';
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css';
 import createEmojiPlugin from '@kangc/v-md-editor/lib/plugins/emoji/index';
@@ -21,6 +23,10 @@ import '@kangc/v-md-editor/lib/plugins/todo-list/todo-list.css';
 import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/index';
 import createHighlightLinesPlugin from '@kangc/v-md-editor/lib/plugins/highlight-lines/index';
 import '@kangc/v-md-editor/lib/plugins/highlight-lines/highlight-lines.css';
+import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
+import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
+import createCopyCodePreview from '@kangc/v-md-editor/lib/plugins/copy-code/preview';
+import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
 
 import Prism from 'prismjs';
 
@@ -31,19 +37,22 @@ VMdPreview.use(vuepressTheme, {
       Prism
 })
 
-VueMarkdownEditor.use(createEmojiPlugin())
+VueMarkdownEditor.use(createEmojiPlugin());
 VueMarkdownEditor.use(createKatexPlugin());
 VueMarkdownEditor.use(createMermaidPlugin());
 VueMarkdownEditor.use(createTodoListPlugin({color: 'blue'}));
 VueMarkdownEditor.use(createLineNumbertPlugin());
-VueMarkdownEditor.use(createHighlightLinesPlugin())
+VueMarkdownEditor.use(createHighlightLinesPlugin());
+VueMarkdownEditor.use(createCopyCodePlugin());
 
-VMdPreview.use(createEmojiPlugin())
+VMdPreview.use(createEmojiPlugin());
 VMdPreview.use(createKatexPlugin());
 VMdPreview.use(createMermaidPlugin());
 VMdPreview.use(createTodoListPlugin({color: 'blue'}));
 VMdPreview.use(createLineNumbertPlugin());
-VMdPreview.use(createHighlightLinesPlugin())
+VMdPreview.use(createHighlightLinesPlugin());
+
+VMdPreviewHtml.use(createCopyCodePreview());
 
 const app = createApp(App);
 
@@ -55,6 +64,7 @@ const router = VueRouter.createRouter({
 
 app.use(VueMarkdownEditor)
 app.use(VMdPreview)
+app.use(VMdPreviewHtml)
 app.use(router);
 app.use(ElementPlus, {
       locale: zhCn,

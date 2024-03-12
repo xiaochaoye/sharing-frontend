@@ -1,6 +1,6 @@
 <template>
   <div class="article_list_content">
-    <a-card class="card-item" v-for="card in cards" :key="card.id" hoverable style="width: 200px; height: 340px">
+    <a-card class="card-item" v-for="card in cards" :key="card.id" hoverable style="width: 230px; height: 340px">
       <template #cover>
         <img v-if="card.cover == null || card.cover == ''" style="width: 100%; height: 150px; display: inline-block"
              alt="默认封面"
@@ -24,8 +24,8 @@
             {{ card.likeCount }}
           </a-button>
         </a-space>
-        <a-button type="success" :icon="h(ShareAltOutlined)"/>
-        <a-button type="success" :icon="h(EllipsisOutlined)"/>
+        <a-button type="success" :icon="h(ShareAltOutlined)" @click=""/>
+        <a-button type="success" :icon="h(EllipsisOutlined)" @click="isVisible = true"/>
       </template>
       <a-card-meta :description="truncatedDescription(card.description)">
         <template #title>
@@ -35,7 +35,12 @@
           <a-avatar :size="50" style="color: #f56a00; background-color: #fde3cf">{{ card.author.charAt(0) }}</a-avatar>
         </template>
       </a-card-meta>
+      <a-modal v-model:open="isVisible" title="删除还是举报？" centered @ok="deleteOrNot(card)" cancelText="举报"
+               ok-text="删除" :mask="false">
+        <p></p>
+      </a-modal>
     </a-card>
+
     <el-empty v-if="cards.length === 0" :image-size="200" style="position:absolute; top:20%; left:43%"/>
   </div>
 </template>
@@ -45,15 +50,20 @@ import {LikeOutlined, ShareAltOutlined, EllipsisOutlined, LikeTwoTone} from '@an
 import {onMounted, ref, h} from "vue";
 import myAxios from '../../plugins/myAxios';
 import {useRouter} from "vue-router";
+import {ElMessage} from "element-plus";
 
 const router = useRouter();
+
+const isVisible = ref<boolean>(false);
 
 // 记录当前点击次数，开始为 1， 数据量不大，采用点击一次点赞，再点一次取消点赞，记录按钮延时为 1s,标志位为isDisabled。
 // todo 从表中获取这个文章的点赞数
 // todo 点赞需要在表里加 1，取消点赞就减 1
 const increaseLike = (index) => {
-  myAxios.post('/article/like', {
-    id: index.id
+  myAxios.get('/article/like', {
+    params: {
+      id: index.id
+    }
   })
   index.likeCount++;
   index.clickCount++;
@@ -64,12 +74,32 @@ const increaseLike = (index) => {
 }
 
 const cancelLike = (index) => {
+  myAxios.get('/article/dislike', {
+    params: {
+      id: index.id
+    }
+  })
   index.likeCount--;
   index.clickCount--;
   index.isDisabled = true;
   setTimeout(() => {
     index.isDisabled = false;
   }, 1000)
+}
+
+const deleteOrNot = (index) => {
+  setTimeout(() => {
+    isVisible.value = false
+  }, 2000)
+  myAxios.get('/article/delete', {
+    params: {
+      id: index.id,
+    }
+  }).then(response => {
+    if (response.code !== 200) {
+      ElMessage.error(response.description)
+    }
+  })
 }
 
 //todo 获取卡片数据后端方法
@@ -140,7 +170,7 @@ const cards = ref([]);
 
 // 截断超过 10 个字的文章描述
 const truncatedDescription = (description: string) => {
-  if (description.length > 10) {
+  if (description.length > 7) {
     return description.substring(0, 5) + "..."
   } else {
     return description;
@@ -182,9 +212,9 @@ onMounted(fetchCards);
   height: calc(100% - 50px);
   padding: 20px;
   box-sizing: border-box;
-  max-width: 1000px;
-  min-width: 700px;
-  opacity: 0.9;
+  max-width: 1100px;
+  min-width: 710px;
+  opacity: 0.95;
   overflow: auto;
   display: flex;
   justify-content: flex-start;
