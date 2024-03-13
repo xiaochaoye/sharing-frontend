@@ -3,6 +3,8 @@ import ArticleEditor from "../views/articles/ArticleEditor.vue";
 import ShowArticle from "../views/articles/ShowArticle.vue";
 import UserInfo from "../views/user/UserInfo.vue";
 import ArticleList from "../views/articles/ArticleList.vue";
+import PersonHomePage from "../views/user/PersonHomePage.vue";
+import UserManage from "../views/user/UserManage.vue";
 
 /**
  *    @author 超
@@ -14,7 +16,9 @@ const routes = [
       {path: '/write', title: '写文章', component: ArticleEditor},
       {path: '/read', title: '读文章', component: ShowArticle},
       {path: '/edit', title: '编辑个人信息', component: UserInfo},
-      {path: '/main', title: '平台主页面', component: ArticleList}
+      {path: '/main', title: '平台主页面', component: ArticleList},
+      {path: '/user', title: '个人主页', component: PersonHomePage},
+      {path: '/manage', title: '用户管理', component: UserManage}
 ]
 
 export default routes;

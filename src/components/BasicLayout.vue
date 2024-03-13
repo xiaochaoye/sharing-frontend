@@ -15,7 +15,7 @@
           active-text-color="#ffd04b"
           router
       >
-        <el-menu-item index="/write">写文章页</el-menu-item>
+        <el-menu-item index="/write">写文章</el-menu-item>
         <el-menu-item index="/edit">编辑个人信息</el-menu-item>
         <el-menu-item index="/login">登录页</el-menu-item>
         <el-menu-item index="/chat">聊聊天</el-menu-item>
@@ -28,6 +28,7 @@
             <el-dropdown-menu v-if="showMe">
               <el-dropdown-item :icon="UserFilled" command="/edit">个人主页</el-dropdown-item>
               <el-dropdown-item :icon="Promotion" command="/logout">退出登录</el-dropdown-item>
+              <el-dropdown-item :icon="Tools" v-if="isAdmin" command="/manage">用户管理</el-dropdown-item>
             </el-dropdown-menu>
             <el-dropdown v-if="showMe === false">登录享用更多功能</el-dropdown>
           </template>
@@ -48,7 +49,7 @@
 
 <script setup lang="ts">
 import routes from '../config/route.ts'
-import {UserFilled, Promotion} from "@element-plus/icons-vue";
+import {UserFilled, Promotion, Tools} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 import myAxios from "../plugins/myAxios.ts";
 import {ElMessage} from "element-plus";
@@ -61,11 +62,16 @@ const avatarImage = ref<string>('https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a5
 
 const showMe = ref(false)
 
+const isAdmin = ref(false)
+
 // 获取头像图片和是否显示头像下拉方法
 const myAvatarImage = async () => {
   const loginUser = await getCurrentUser();
   if (loginUser !== null) {
     showMe.value = true;
+  }
+  if (loginUser.userRole == 1) {
+    isAdmin.value = true
   }
   console.log('loginUser:', loginUser)
   return loginUser ? loginUser.avatarUrl : 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png';
@@ -88,7 +94,8 @@ const choosePage = (command: any) => {
   if (command == "/logout") {
     ElMessage.success("退出成功")
     myAxios.post('/user/logout')
-    router.push('/login')
+    router.push('/main')
+    window.location.reload()
   } else {
     router.push(command)
   }

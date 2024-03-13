@@ -71,4 +71,3 @@ app.use(ElementPlus, {
 })
 app.mount('#app');
 
-router.push('/main')

@@ -24,7 +24,7 @@
             {{ card.likeCount }}
           </a-button>
         </a-space>
-        <a-button type="success" :icon="h(ShareAltOutlined)" @click=""/>
+        <a-button type="success" :icon="h(ShareAltOutlined)" @click="handleReport(card.id)"/>
         <a-button type="success" :icon="h(EllipsisOutlined)" @click="isVisible = true"/>
       </template>
       <a-card-meta :description="truncatedDescription(card.description)">
@@ -35,7 +35,7 @@
           <a-avatar :size="50" style="color: #f56a00; background-color: #fde3cf">{{ card.author.charAt(0) }}</a-avatar>
         </template>
       </a-card-meta>
-      <a-modal v-model:open="isVisible" title="删除还是举报？" centered @ok="deleteOrNot(card)" cancelText="举报"
+      <a-modal v-model:open="isVisible" title="是否删除该文章？" centered @ok="deleteOrNot(card)" cancelText="取消"
                ok-text="删除" :mask="false">
         <p></p>
       </a-modal>
@@ -87,6 +87,11 @@ const cancelLike = (index) => {
   }, 1000)
 }
 
+const handleReport = (id) => {
+  
+  ElMessage.success("举报成功")
+}
+
 const deleteOrNot = (index) => {
   setTimeout(() => {
     isVisible.value = false
@@ -96,10 +101,15 @@ const deleteOrNot = (index) => {
       id: index.id,
     }
   }).then(response => {
-    if (response.code !== 200) {
+    if (response.code === 0) {
+      ElMessage.success(response.description)
+    } else {
       ElMessage.error(response.description)
     }
   })
+  setTimeout(() => {
+    window.location.reload(); // 刷新当前页面
+  }, 3000);
 }
 
 //todo 获取卡片数据后端方法
