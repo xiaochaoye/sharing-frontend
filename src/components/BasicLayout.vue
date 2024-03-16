@@ -103,7 +103,7 @@ const choosePage = (command: any) => {
 
 // 回到主页方法
 const goToHomePage = () => {
-  router.push('/main');
+  router.push('/');
 };
 
 

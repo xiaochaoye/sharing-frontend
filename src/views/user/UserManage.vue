@@ -4,15 +4,15 @@
       <div class="left-content">
         <div class="itemCon">
           <span class="label">用户昵称：</span>
-          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input" />
+          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input"/>
         </div>
         <div class="itemCon">
           <span class="label">用户ID：</span>
-          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input" />
+          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input"/>
         </div>
         <div class="itemCon">
           <span class="label">性别：</span>
-          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input" />
+          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input"/>
         </div>
       </div>
       <div class="right-content">
@@ -22,20 +22,20 @@
     </div>
 
     <div class="tableContent">
-      <el-table :data="tableData" style="width: 100%; overflow: auto;" show-overflow-tooltip="true">
-        <el-table-column fixed prop="username" label="用户昵称" width="150" />
-        <el-table-column prop="id" label="用户ID" width="120" />
-        <el-table-column prop="avatarUrl" label="头像" width="120" />
-        <el-table-column prop="phone" label="手机号" width="120" />
-        <el-table-column prop="email" label="邮箱" width="120" />
-        <el-table-column prop="gender" label="性别" width="120" :formatter="genderFormate" />
-        <el-table-column prop="isDelete" label="是否删除" width="120" />
-        <el-table-column prop="userRole" label="用户角色" width="120" />
-        <el-table-column prop="userBirthday" label="生日" width="120" />
+      <el-table :data="tableData" height="550px" show-overflow-tooltip="true">
+        <el-table-column fixed prop="username" label="用户昵称" width="150"/>
+        <el-table-column prop="id" label="用户ID" width="120"/>
+        <el-table-column prop="avatarUrl" label="头像" width="120"/>
+        <el-table-column prop="phone" label="手机号" width="120"/>
+        <el-table-column prop="email" label="邮箱" width="120"/>
+        <el-table-column prop="gender" label="性别" width="120" :formatter="genderFormat"/>
+        <el-table-column prop="isDelete" label="是否删除" width="120"/>
+        <el-table-column prop="userRole" label="用户角色" width="120"/>
+        <el-table-column prop="userBirthday" label="生日" width="120"/>
         <el-table-column fixed="right" prop label="操作" width="120">
           <template #default>
-            <el-button link type="primary" size="small" @click="handleClick">Detail</el-button>
-            <el-button link type="primary" size="small">Edit</el-button>
+            <el-button link type="primary" size="small" @click="handleClick">编辑</el-button>
+            <el-button link type="primary" size="small">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -45,10 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { ElMessageBox } from "element-plus";
+import {ref} from "vue";
+import {ElMessageBox} from "element-plus";
 
-const genderormate = (row, column) => {
+const genderFormat = (row) => {
   return row.gender === 0 ? "男" : "女"
 }
 
@@ -154,6 +154,50 @@ const tableData = [
   {
     "username": "",
     "id": "9",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
+  },
+  {
+    "username": "",
+    "id": "10",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
+  },
+  {
+    "username": "",
+    "id": "10",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
+  },
+  {
+    "username": "",
+    "id": "10",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
+  },
+  {
+    "username": "",
+    "id": "10",
     "avatarUrl": "",
     "phone": "17833781538",
     "email": "2861184979@qq.com",
