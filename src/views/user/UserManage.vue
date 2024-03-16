@@ -3,18 +3,17 @@
     <div class="tag-content">
       <div class="left-content">
         <div class="itemCon">
-          <span class="label">入库时间：</span>
-          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input"/>
+          <span class="label">用户昵称：</span>
+          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input" />
         </div>
         <div class="itemCon">
-          <span class="label">入库时间：</span>
-          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input"/>
+          <span class="label">用户ID：</span>
+          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input" />
         </div>
         <div class="itemCon">
-          <span class="label">入库时间：</span>
-          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input"/>
+          <span class="label">性别：</span>
+          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input" />
         </div>
-
       </div>
       <div class="right-content">
         <el-button type="primary" @click="handleSearch">查 询</el-button>
@@ -23,16 +22,17 @@
     </div>
 
     <div class="tableContent">
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column fixed prop="date" label="用户昵称" width="150"/>
-        <el-table-column prop="name" label="用户ID" width="120"/>
-        <el-table-column prop="state" label="头像" width="120"/>
-        <el-table-column prop="city" label="手机号" width="120"/>
-        <el-table-column prop="address" label="邮箱" width="600"/>
-        <el-table-column prop="zip" label="性别" width="120"/>
-        <el-table-column prop="zip" label="是否删除" width="120"/>
-        <el-table-column prop="zip" label="用户角色" width="120"/>
-        <el-table-column fixed="right" label="生日" width="120">
+      <el-table :data="tableData" style="width: 100%; overflow: auto;" show-overflow-tooltip="true">
+        <el-table-column fixed prop="username" label="用户昵称" width="150" />
+        <el-table-column prop="id" label="用户ID" width="120" />
+        <el-table-column prop="avatarUrl" label="头像" width="120" />
+        <el-table-column prop="phone" label="手机号" width="120" />
+        <el-table-column prop="email" label="邮箱" width="120" />
+        <el-table-column prop="gender" label="性别" width="120" :formatter="genderFormate" />
+        <el-table-column prop="isDelete" label="是否删除" width="120" />
+        <el-table-column prop="userRole" label="用户角色" width="120" />
+        <el-table-column prop="userBirthday" label="生日" width="120" />
+        <el-table-column fixed="right" prop label="操作" width="120">
           <template #default>
             <el-button link type="primary" size="small" @click="handleClick">Detail</el-button>
             <el-button link type="primary" size="small">Edit</el-button>
@@ -45,8 +45,12 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
-import {ElMessageBox} from "element-plus";
+import { ref } from "vue";
+import { ElMessageBox } from "element-plus";
+
+const genderormate = (row, column) => {
+  return row.gender === 0 ? "男" : "女"
+}
 
 const inputVal = ref('asfsf')
 
@@ -60,40 +64,114 @@ const handleClick = () => {
 
 const tableData = [
   {
-    date: '2016-05-03',
-    name: 'Tom',
-    state: 'California',
-    city: 'Los Angeles',
-    address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Home',
+    "username": "嘻哈一怪",
+    "id": "1",
+    "avatarUrl": "https://pic2.zhimg.com/v2-2387649d9de0ef6b74aac0f69fbc8b59_r.jpg",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "1",
+    "gender": 0,
+    "userBirthday": "14/3/2024"
   },
   {
-    date: '2016-05-02',
-    name: 'Tom',
-    state: 'California',
-    city: 'Los Angeles',
-    address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Office',
+    "username": "蔡徐坤",
+    "id": "2",
+    "avatarUrl": "https://pic2.zhimg.com/v2-2387649d9de0ef6b74aac0f69fbc8b59_r.jpg",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": "14/3/2024"
   },
   {
-    date: '2016-05-04',
-    name: 'Tom',
-    state: 'California',
-    city: 'Los Angeles',
-    address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Home',
+    "username": "ikun",
+    "id": "3",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
   },
   {
-    date: '2016-05-01',
-    name: 'Tom',
-    state: 'California',
-    city: 'Los Angeles',
-    address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Office',
+    "username": "ijun",
+    "id": "4",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
+  },
+  {
+    "username": "",
+    "id": "5",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
+  },
+  {
+    "username": "",
+    "id": "6",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
+  },
+  {
+    "username": "",
+    "id": "7",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
+  },
+  {
+    "username": "",
+    "id": "8",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
+  },
+  {
+    "username": "",
+    "id": "9",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
+  },
+  {
+    "username": "",
+    "id": "10",
+    "avatarUrl": "",
+    "phone": "17833781538",
+    "email": "2861184979@qq.com",
+    "isDelete": "0",
+    "userRole": "0",
+    "gender": "",
+    "userBirthday": ""
   },
 ]
 </script>
@@ -133,6 +211,14 @@ const tableData = [
 
       span {
         font-size: 16px;
+        display: inline-block;
+        width: 100px;
+        text-align: right;
+        margin-right: 10px;
+      }
+
+      el-input {
+        flex: 1;
       }
     }
   }
