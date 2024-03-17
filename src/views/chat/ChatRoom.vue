@@ -34,9 +34,6 @@
           <div class="message" v-for="(item, index) of state.chatData.value" :key="index">
             <el-text class="tips" type="primary" v-if="item.type === 'tips'">{{ item.content }}</el-text>
             <div v-else :class="item.type === 'me' ? 'messageRight' : 'messageLeft'">
-              <!--              <div class="userName" @click="handleOpenDrawer(item)">-->
-              <!--                {{ item.userName.charAt(0) }}-->
-              <!--              </div>-->
               <a-avatar :size="'default'" style="color: #f56a00; background-color: #fde3cf"
                         @click="handleOpenDrawer(item)">{{
                   item.userName.charAt(0)
@@ -115,7 +112,7 @@ const userChatData = reactive({
   value: [],
 });
 
-// 多出用到的常量
+// 多处用到的常量
 const state = reactive({
   title: "知识交流室",
   Total: 0,
@@ -160,7 +157,7 @@ socket.on("welcome", ({name, uList}) => {
   state.chatData.value.push({
     type: "tips",
     id: Math.random().toString().split(".")[1].slice(0, 10),
-    content: "欢迎" + name + "加入群聊~",
+    content: "欢迎" + name + "进入交流室，点击头像即可私聊",
   });
   boxScroll("main");
 });
@@ -417,5 +414,11 @@ onMounted(() => {
 #userChatContent {
   overflow-y: auto;
   height: 100%;
+}
+
+.userInfo {
+  margin-left: 10px; /* 调整用户名字距离头像的距离 */
+  font-size: 14px; /* 设置用户名字的字体大小 */
+  color: #fff; /* 设置用户名字的颜色 */
 }
 </style>

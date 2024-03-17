@@ -3,7 +3,7 @@
     <a-card class="login_card" bodyStyle="height:100%;padding:unset;" hoverable>
       <div class="card_body">
         <div class="login_img">
-          <img src="/src/assets/kkbomb.jpg"/>
+          <img src="/src/assets/OIP-C.jpg"/>
           <p>Knowledge Reshapes Destiny！</p>
           <p>知识分享</p>
         </div>

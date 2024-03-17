@@ -20,7 +20,6 @@ declare module 'vue' {
     APageHeader: typeof import('ant-design-vue/es')['PageHeader']
     ARow: typeof import('ant-design-vue/es')['Row']
     ASpace: typeof import('ant-design-vue/es')['Space']
-    ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
     ATypographyTitle: typeof import('ant-design-vue/es')['TypographyTitle']
     BasicLayout: typeof import('./src/components/BasicLayout.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']

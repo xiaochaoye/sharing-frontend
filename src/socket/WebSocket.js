@@ -1,6 +1,5 @@
 import {Server} from "socket.io";
-// 开启cors跨域
-// @ts-ignore
+// 开启cors跨域  npx nodemon WebSocket.js
 const io = new Server(5432, {cors: true});
 
 let userList = new Map();
