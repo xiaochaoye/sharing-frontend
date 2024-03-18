@@ -72,7 +72,7 @@ import {getCurrentUser} from "../../config/user.ts";
 
 interface RuleForm {
   name: string
-  gender: string
+  gender: number
   date: string
   phone: string
   email: string
@@ -84,7 +84,7 @@ const emailSuffix = ref()
 
 const form = reactive<RuleForm>({
   name: '',
-  gender: '',
+  gender: Number(''),
   date: '',
   phone: '',
   email: ''
@@ -163,7 +163,7 @@ const updateSubmit = async () => {
 
 const onCancel = () => {
   form.name = ''
-  form.gender = ''
+  form.gender = Number('')
   form.date = ''
   form.phone = ''
   form.email = ''

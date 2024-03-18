@@ -1,4 +1,13 @@
 <template>
+
+  <el-input v-model="input4" style="width: 240px" placeholder="搜索文章">
+    <template #prefix>
+      <el-icon class="el-input__icon">
+        <Search/>
+      </el-icon>
+    </template>
+  </el-input>
+
   <div class="article_list_content">
     <a-card class="card-item" v-for="card in cards" :key="card.id" hoverable style="width: 230px; height: 340px">
       <template #cover>
@@ -47,6 +56,7 @@
 
 <script setup lang="ts">
 import {LikeOutlined, ShareAltOutlined, EllipsisOutlined, LikeTwoTone} from '@ant-design/icons-vue';
+import {Search} from "@element-plus/icons-vue";
 import {onMounted, ref, h} from "vue";
 import myAxios from '../../plugins/myAxios';
 import {useRouter} from "vue-router";
@@ -88,7 +98,6 @@ const cancelLike = (index) => {
 }
 
 const handleReport = (id) => {
-  
   ElMessage.success("举报成功")
 }
 
@@ -217,9 +226,9 @@ onMounted(fetchCards);
 
 <style scoped lang="less">
 .article_list_content {
-  margin: 30px auto 0;
+  margin: 30px auto 0 auto;
   background-color: #ededed;
-  height: calc(100% - 50px);
+  height: calc(100% - 30px);
   padding: 20px;
   box-sizing: border-box;
   max-width: 1100px;
@@ -238,12 +247,4 @@ onMounted(fetchCards);
   justify-content: space-between;
 }
 
-//.article_list_content {
-//  width: 60%;
-//  height: calc(100% - 30px);
-//  background-color: #ffffff;
-//  margin: 20px auto 0 auto;
-//  overflow: auto;
-//  opacity: 0.9;
-//}
 </style>

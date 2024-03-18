@@ -12,7 +12,10 @@
         </div>
         <div class="itemCon">
           <span class="label">性别：</span>
-          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input"/>
+          <el-select v-model="gender" placeholder="Select" style="width: 240px">
+            <el-option label="男" value="0"></el-option>
+            <el-option label="女" value="1"></el-option>
+          </el-select>
         </div>
       </div>
       <div class="right-content">
@@ -22,10 +25,16 @@
     </div>
 
     <div class="tableContent">
-      <el-table :data="tableData" height="550px" show-overflow-tooltip="true">
+      <el-table :data="tableData" max-height="350px" show-overflow-tooltip="true">
         <el-table-column fixed prop="username" label="用户昵称" width="150"/>
         <el-table-column prop="id" label="用户ID" width="120"/>
-        <el-table-column prop="avatarUrl" label="头像" width="120"/>
+        <el-table-column prop="avatarUrl" label="头像" width="120">
+          <template #default="scope">
+            <div style="display: flex; align-items: center">
+              <el-image :src="scope.row.avatarUrl" height="50px"/>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="phone" label="手机号" width="120"/>
         <el-table-column prop="email" label="邮箱" width="120"/>
         <el-table-column prop="gender" label="性别" width="120" :formatter="genderFormat"/>
@@ -45,8 +54,14 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
-import {ElMessageBox} from "element-plus";
+import {onMounted, ref} from "vue";
+import {ElMessage, ElMessageBox} from "element-plus";
+import {getCurrentUser} from "../../config/user.ts";
+import {useRouter} from "vue-router";
+
+const router = useRouter()
+
+const gender = ref()
 
 const genderFormat = (row) => {
   return row.gender === 0 ? "男" : "女"
@@ -62,162 +77,25 @@ const handleClick = () => {
   ElMessageBox.alert('click')
 }
 
-const tableData = [
-  {
-    "username": "嘻哈一怪",
-    "id": "1",
-    "avatarUrl": "https://pic2.zhimg.com/v2-2387649d9de0ef6b74aac0f69fbc8b59_r.jpg",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "1",
-    "gender": 0,
-    "userBirthday": "14/3/2024"
-  },
-  {
-    "username": "蔡徐坤",
-    "id": "2",
-    "avatarUrl": "https://pic2.zhimg.com/v2-2387649d9de0ef6b74aac0f69fbc8b59_r.jpg",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": "14/3/2024"
-  },
-  {
-    "username": "ikun",
-    "id": "3",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-  {
-    "username": "ijun",
-    "id": "4",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-  {
-    "username": "",
-    "id": "5",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-  {
-    "username": "",
-    "id": "6",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-  {
-    "username": "",
-    "id": "7",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-  {
-    "username": "",
-    "id": "8",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-  {
-    "username": "",
-    "id": "9",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-  {
-    "username": "",
-    "id": "10",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-  {
-    "username": "",
-    "id": "10",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-  {
-    "username": "",
-    "id": "10",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-  {
-    "username": "",
-    "id": "10",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-  {
-    "username": "",
-    "id": "10",
-    "avatarUrl": "",
-    "phone": "17833781538",
-    "email": "2861184979@qq.com",
-    "isDelete": "0",
-    "userRole": "0",
-    "gender": "",
-    "userBirthday": ""
-  },
-]
+const tableData = ref([])
+
+const fetchUser = () => {
+
+}
+
+onMounted(async () => {
+  const loginUser = await getCurrentUser()
+  if (loginUser === null) {
+    ElMessage.error("未登录！")
+    router.back()
+  }
+  if (loginUser.userRole != 1) {
+    ElMessage.error("无权限！")
+    router.back()
+  } else {
+    fetchUser()
+  }
+})
 </script>
 
 <style scoped lang="less">
