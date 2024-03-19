@@ -1,13 +1,15 @@
 <template>
 
-  <el-input v-model="input4" style="width: 240px" placeholder="搜索文章">
-    <template #prefix>
-      <el-icon class="el-input__icon">
-        <Search/>
-      </el-icon>
-    </template>
-  </el-input>
-
+  <div class="input-box">
+    <el-button>搜索</el-button>
+    <el-input v-model="input4" style="width: 240px" placeholder="搜索文章">
+      <template #prefix>
+        <el-icon class="el-input__icon">
+          <Search/>
+        </el-icon>
+      </template>
+    </el-input>
+  </div>
   <div class="article_list_content">
     <a-card class="card-item" v-for="card in cards" :key="card.id" hoverable style="width: 230px; height: 340px">
       <template #cover>
@@ -228,7 +230,7 @@ onMounted(fetchCards);
 .article_list_content {
   margin: 30px auto 0 auto;
   background-color: #ededed;
-  height: calc(100% - 30px);
+  height: calc(100% - 136px);
   padding: 20px;
   box-sizing: border-box;
   max-width: 1100px;
@@ -238,6 +240,17 @@ onMounted(fetchCards);
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
+}
+
+.input-box {
+  margin: 30px auto 0 auto;
+  max-width: 1100px;
+  min-width: 710px;
+  background-color: #ededed;
+  box-sizing: border-box;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .card-item {

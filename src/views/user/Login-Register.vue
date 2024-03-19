@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 
-import {reactive, ref} from 'vue';
+import {reactive, ref, nextTick} from 'vue';
 import {useRouter} from 'vue-router';
 import {message} from 'ant-design-vue';
 import myAxios from "../../plugins/myAxios.ts";
@@ -117,7 +117,7 @@ const loginSubmit = async () => {
     }).then((res) => {
       console.log(res);
       if (res.code === 0 && res.data) {
-        router.push('/');
+        router.push('/')
         message.success('登录成功')
       } else {
         message.error(res.description);
