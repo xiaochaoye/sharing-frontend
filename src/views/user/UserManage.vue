@@ -4,15 +4,15 @@
       <div class="left-content">
         <div class="itemCon">
           <span class="label">用户昵称：</span>
-          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input"/>
+          <el-input v-model="inputName" style="width: 240px" placeholder="请输入用户名"/>
         </div>
         <div class="itemCon">
           <span class="label">用户ID：</span>
-          <el-input v-model="inputVal" style="width: 240px" placeholder="Please input"/>
+          <el-input v-model="inputId" style="width: 240px" placeholder="请输入ID"/>
         </div>
         <div class="itemCon">
           <span class="label">性别：</span>
-          <el-select v-model="gender" placeholder="Select" style="width: 240px">
+          <el-select v-model="gender" placeholder="选择" style="width: 240px">
             <el-option label="男" value="0"></el-option>
             <el-option label="女" value="1"></el-option>
           </el-select>
@@ -67,7 +67,8 @@ const genderFormat = (row) => {
   return row.gender === 0 ? "男" : "女"
 }
 
-const inputVal = ref('asfsf')
+const inputName = ref()
+const inputId = ref()
 
 const handleSearch = () => {
 
