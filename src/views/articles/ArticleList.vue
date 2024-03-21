@@ -1,14 +1,25 @@
 <template>
 
   <div class="input-box">
-    <el-button>搜索</el-button>
-    <el-input v-model="input4" style="width: 240px" placeholder="搜索文章">
-      <template #prefix>
-        <el-icon class="el-input__icon">
-          <Search/>
-        </el-icon>
-      </template>
-    </el-input>
+    <el-space wrap size="100">
+      <el-input v-model="inputTitle" style="width: 240px" placeholder="按文章标题搜索">
+        <template #prefix>
+          <el-icon class="el-input__icon">
+            <Search/>
+          </el-icon>
+        </template>
+      </el-input>
+      <el-button type="primary" :icon="Search" @click="searchTitle">搜索</el-button>
+      <a-divider style="height: 30px; background-color: #000000" type="vertical"/>
+      <el-input v-model="inputContent" style="width: 240px" placeholder="按文章内容搜索">
+        <template #prefix>
+          <el-icon class="el-input__icon">
+            <Search/>
+          </el-icon>
+        </template>
+      </el-input>
+      <el-button type="primary" :icon="Search" @click="searchContent">搜索</el-button>
+    </el-space>
   </div>
   <div class="article_list_content">
     <a-card class="card-item" v-for="card in cards" :key="card.id" hoverable style="width: 230px; height: 340px">
@@ -27,15 +38,20 @@
       <template #actions>
         <a-space>
           <a-button type="success" v-if="card.clickCount % 2 == 0" :icon="h(LikeOutlined)" @click="increaseLike(card)"
-                    :disabled="card.isDisabled">
-            {{ card.likeCount }}
+                    :disabled="card.isDisabled">{{ card.likeCount }}
           </a-button>
           <a-button type="success" v-if="card.clickCount % 2 !== 0" :icon="h(LikeTwoTone)" @click="cancelLike(card)"
-                    :disabled="card.isDisabled">
-            {{ card.likeCount }}
+                    :disabled="card.isDisabled">{{ card.likeCount }}
           </a-button>
         </a-space>
-        <a-button type="success" :icon="h(ShareAltOutlined)" @click="handleReport(card.id)"/>
+        <a-space>
+          <a-button type="success" v-if="card.clickCount % 2 == 0" :icon="h(HeartOutlined)"
+                    @click="handleCollect(card.id)" :disabled="card.isDisabled">{{ card.collectCount }}
+          </a-button>
+          <a-button type="success" v-if="card.clickCount % 2 !== 0" :icon="h(HeartTwoTone)"
+                    @click="removeCollect(card.id)" :disabled="card.isDisabled">{{ card.collectCount }}
+          </a-button>
+        </a-space>
         <a-button type="success" :icon="h(EllipsisOutlined)" @click="isVisible = true"/>
       </template>
       <a-card-meta :description="truncatedDescription(card.description)">
@@ -57,20 +73,50 @@
 </template>
 
 <script setup lang="ts">
-import {LikeOutlined, ShareAltOutlined, EllipsisOutlined, LikeTwoTone} from '@ant-design/icons-vue';
+import {LikeOutlined, HeartOutlined, EllipsisOutlined, LikeTwoTone, HeartTwoTone} from '@ant-design/icons-vue';
 import {Search} from "@element-plus/icons-vue";
 import {onMounted, ref, h} from "vue";
 import myAxios from '../../plugins/myAxios';
 import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
+import {getCurrentUser} from "../../config/user.ts";
 
 const router = useRouter();
 
+const inputTitle = ref('');
+const inputContent = ref('');
+
 const isVisible = ref<boolean>(false);
 
+const searchTitle = async () => {
+  const user = await getCurrentUser()
+  if (user == null) {
+    ElMessage.error("未登录！")
+  }
+  await myAxios.get('/article/search/title', {
+    params: {
+      keyword: inputTitle.value
+    }
+  }).then(response => {
+    cards.value = response.data;
+  })
+}
+
+const searchContent = async () => {
+  const user = await getCurrentUser()
+  if (user == null) {
+    ElMessage.error("未登录！")
+  }
+  await myAxios.get('/article/search/content', {
+    params: {
+      keyword: inputContent.value
+    }
+  }).then(response => {
+    cards.value = response.data;
+  })
+}
+
 // 记录当前点击次数，开始为 1， 数据量不大，采用点击一次点赞，再点一次取消点赞，记录按钮延时为 1s,标志位为isDisabled。
-// todo 从表中获取这个文章的点赞数
-// todo 点赞需要在表里加 1，取消点赞就减 1
 const increaseLike = (index) => {
   myAxios.get('/article/like', {
     params: {
@@ -99,8 +145,38 @@ const cancelLike = (index) => {
   }, 1000)
 }
 
-const handleReport = (id) => {
-  ElMessage.success("举报成功")
+const handleCollect = async (id) => {
+  const user = await getCurrentUser()
+  if (user == null) {
+    ElMessage.error("未登录！")
+  }
+  await myAxios.post('/article/favourite/set', {
+    contentID: id,
+    userId: user.id
+  }).then(response => {
+    if (response.code === 0) {
+      ElMessage.success("收藏成功")
+    } else {
+      ElMessage.warning(response.description)
+    }
+  })
+}
+
+const removeCollect = async (id) => {
+  const user = await getCurrentUser()
+  if (user == null) {
+    ElMessage.error("未登录！")
+  }
+  await myAxios.post('/article/favourite/set', {
+    contentID: id,
+    userId: user.id
+  }).then(response => {
+    if (response.code === 0) {
+      ElMessage.success("收藏成功")
+    } else {
+      ElMessage.warning(response.description)
+    }
+  })
 }
 
 const deleteOrNot = (index) => {
@@ -123,7 +199,6 @@ const deleteOrNot = (index) => {
   }, 3000);
 }
 
-//todo 获取卡片数据后端方法
 // 定义响应式数据来存储卡片信息
 const cards = ref([]);
 // const cards = ref([

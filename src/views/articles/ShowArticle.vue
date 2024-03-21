@@ -1,9 +1,25 @@
 <template>
   <div class="content-box">
     <div class="left">
-      <el-badge :value="1" class="item" type="primary">
-        <el-button>comments</el-button>
+      <el-badge :value="likeCount" class="item" type="primary">
+        <el-button @click="increaseLike">
+          <el-icon :size="20">
+            <CircleCheck/>
+          </el-icon>
+        </el-button>
       </el-badge>
+      <el-badge :value="collectCount" class="item" type="primary">
+        <el-button @click="handleCollect">
+          <el-icon :size="20">
+            <Star/>
+          </el-icon>
+        </el-button>
+      </el-badge>
+      <el-button @click="al">
+        <el-icon :size="20">
+          <Share/>
+        </el-icon>
+      </el-button>
     </div>
     <div class="article_show_content">
       <el-form label-width="120px">
@@ -23,14 +39,57 @@ import {onMounted, ref} from "vue";
 import myAxios from "../../plugins/myAxios.ts";
 import {useRoute} from "vue-router";
 import {ElMessage} from "element-plus";
+import {CircleCheck, Share, Star} from "@element-plus/icons-vue";
+import {getCurrentUser} from "../../config/user.ts";
 
 const route = useRoute();
 
 const title = ref('')
-
 const text = ref('')
-
 const author = ref('')
+const likeCount = ref('')
+const collectCount = ref('')
+const flag = ref(0)
+
+const al = () => {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    ElMessage.success("复制链接成功！")
+  }).catch((error) => {
+    ElMessage.warning(error)
+  })
+}
+
+const increaseLike = () => {
+
+  if (flag.value >= 1) {
+    ElMessage.error("你已经点赞过该文章！")
+    return
+  }
+  myAxios.get('/article/like', {
+    params: {
+      id: route.query.articleId
+    }
+  })
+  likeCount.value = likeCount.value + 1
+  flag.value++
+}
+
+const handleCollect = async () => {
+  const user = await getCurrentUser()
+  if (user == null) {
+    ElMessage.error("未登录！")
+  }
+  await myAxios.post('/article/favourite/set', {
+    contentID: route.query.articleId,
+    userId: user.id
+  }).then(response => {
+    if (response.code === 0) {
+      ElMessage.success("收藏成功")
+    } else {
+      ElMessage.warning(response.description)
+    }
+  })
+}
 
 // 获取文章内容
 async function fetchArticle() {
@@ -43,6 +102,8 @@ async function fetchArticle() {
     text.value = response.data.content;
     title.value = response.data.title;
     author.value = response.data.author;
+    likeCount.value = response.data.likeCount;
+    collectCount.value = response.data.collectCount;
     console.log("文章内容：", text.value)
     console.log("文章标题", title.value)
   } catch (error) {
@@ -67,12 +128,11 @@ onMounted(fetchArticle)
 .content-box {
   display: flex;
   justify-content: center;
-  border: 1px solid red;
   height: 100%;
   box-sizing: border-box;
 
   .left {
-    margin: 20px 10px 0 0;
+    margin: 30px 30px 0 0;
     display: flex;
     flex-direction: column;
 
@@ -91,6 +151,12 @@ onMounted(fetchArticle)
         color: #5ee7df;
       }
     }
+
+    .item {
+      margin-bottom: 20px;
+
+    }
+
   }
 
 }

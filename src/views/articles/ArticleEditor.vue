@@ -84,7 +84,8 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 const form = reactive<RuleForm>({
   title: '',
   description: '',
-  content: '### 右上角全屏编写更方便\n#### 除了已经列举出来的功能外还支持 ***emoji***、***katex***、***mermaid***、***todo-list***、***tip*** 等功能'
+  content: '### 右上角全屏编写更方便\n#### 除了已经列举出来的功能外还支持 ***emoji***、***katex***、***mermaid***、***todo-list***、' +
+      '***tip*** 等功能\n #### 暂不支持图片拖拽上传，请使用添加图片按钮'
 })
 
 // 表单校验规则
@@ -168,7 +169,8 @@ const onSubmit = async () => {
     content: form.content,
     isDisabled: false,
     clickCount: 0,
-    likeCount: 0
+    likeCount: 0,
+    collectCount: 0
   }).then(response => {
     if (response.code === 0) {
       ElMessage.success("上传成功！")
