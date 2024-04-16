@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 
-import {reactive, ref, nextTick} from 'vue';
+import {reactive, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {message} from 'ant-design-vue';
 import myAxios from "../../plugins/myAxios.ts";

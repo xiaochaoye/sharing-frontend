@@ -20,10 +20,10 @@
           <template #dropdown>
             <el-dropdown-menu v-if="showMe">
               <el-dropdown-item :icon="UserFilled" command="/user">个人主页</el-dropdown-item>
-              <el-dropdown-item :icon="Promotion" command="/logout">退出登录</el-dropdown-item>
               <el-dropdown-item :icon="Tools" v-if="isAdmin" command="/manage">用户管理</el-dropdown-item>
+              <el-dropdown-item :icon="Promotion" command="/logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
-            <a-tooltip v-if="showMe === false" placement="bottomRight">登录享用更多功能</a-tooltip>
+            <a-tooltip v-if="showMe === false" placement="bottomRight">登录体验完整功能</a-tooltip>
           </template>
         </el-dropdown>
       </div>
@@ -31,7 +31,7 @@
 
     <div class="center-content">
       <!-- 主内容-->
-      <router-view/>
+      <router-view></router-view>
     </div>
 
     <el-footer class="footer-content">
@@ -76,7 +76,7 @@ const choosePage = (command: any) => {
   if (command == "/logout") {
     ElMessage.success("退出成功")
     myAxios.post('/user/logout')
-    router.push('/')
+    router.push('/list')
     window.location.reload()
   } else {
     router.push(command)

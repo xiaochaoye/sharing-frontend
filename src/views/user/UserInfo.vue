@@ -65,7 +65,7 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref} from 'vue'
+import {onMounted, reactive, ref} from 'vue'
 import {FormInstance, UploadProps, ElMessage, FormRules} from 'element-plus'
 import myAxios from "../../plugins/myAxios.ts";
 import {getCurrentUser} from "../../config/user.ts";
@@ -123,16 +123,16 @@ const httpRequest = async () => {
     dataForm.append('image', it)
   })
 
-  await myAxios.post('/uer/upload',)
+  await myAxios.post('/user/upload',)
 }
 
 // 提交更新方法
 const updateSubmit = async () => {
 
-  // const currentUser = await getCurrentUser();
-  // if (!currentUser) {
-  //   ElMessage.warning('用户未登录！')
-  // }
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    ElMessage.warning('用户未登录！')
+  }
   let dataForm = new FormData();
 
   fileList.value.forEach(it => {
@@ -140,23 +140,23 @@ const updateSubmit = async () => {
   })
 
   await myAxios.post('/user/update', {
-    // id: currentUser.id,
+    id: currentUser.id,
     username: form.name,
     gender: form.gender,
     userBirthday: form.date,
     phone: form.phone,
     email: form.email + emailSuffix.value,
   }).then(response => {
-    if (response.code === 200) {
-      ElMessage.success("信息更新成功")
+    if (response.code === 0) {
+      ElMessage.success("信息更新成功！")
     } else {
-      ElMessage.error(response.description)
+      ElMessage.error("信息更新失败！")
     }
   })
 
   await myAxios.post('/file/uploadAvatar', dataForm).then(response => {
-    if (response.code !== 200) {
-      ElMessage.error(response.description)
+    if (response.code !== 200 ||response.status === 400) {
+      ElMessage.error('头像上传失败！')
     }
   })
 }
@@ -168,6 +168,18 @@ const onCancel = () => {
   form.phone = ''
   form.email = ''
 }
+
+onMounted (async () => {
+  const currentUser = await getCurrentUser();
+  if (currentUser != null) {
+    form.name = currentUser.username
+    form.gender = currentUser.gender
+    form.date = currentUser.userBirthday
+    form.phone = currentUser.phone
+    form.email = currentUser.email.split('@')[0]
+    emailSuffix.value = currentUser.email.split('@')[1]
+  }
+})
 </script>
 
 <style lang="less">

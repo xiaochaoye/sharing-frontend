@@ -89,10 +89,10 @@ const inputContent = ref('');
 const isVisible = ref<boolean>(false);
 
 const searchTitle = async () => {
-  const user = await getCurrentUser()
-  if (user == null) {
-    ElMessage.error("未登录！")
-  }
+  // const user = await getCurrentUser()
+  // if (user == null) {
+  //   ElMessage.error("未登录！")
+  // }
   await myAxios.get('/article/search/title', {
     params: {
       keyword: inputTitle.value
@@ -103,10 +103,10 @@ const searchTitle = async () => {
 }
 
 const searchContent = async () => {
-  const user = await getCurrentUser()
-  if (user == null) {
-    ElMessage.error("未登录！")
-  }
+  // const user = await getCurrentUser()
+  // if (user == null) {
+  //   ElMessage.error("未登录！")
+  // }
   await myAxios.get('/article/search/content', {
     params: {
       keyword: inputContent.value
@@ -117,7 +117,12 @@ const searchContent = async () => {
 }
 
 // 记录当前点击次数，开始为 1， 数据量不大，采用点击一次点赞，再点一次取消点赞，记录按钮延时为 1s,标志位为isDisabled。
-const increaseLike = (index) => {
+const increaseLike = async (index) => {
+  const user = await getCurrentUser()
+  if (user == null) {
+    ElMessage.error("未登录！")
+    return
+  }
   myAxios.get('/article/like', {
     params: {
       id: index.id
@@ -172,7 +177,7 @@ const removeCollect = async (id) => {
     userId: user.id
   }).then(response => {
     if (response.code === 0) {
-      ElMessage.success("收藏成功")
+      ElMessage.success("移除收藏成功")
     } else {
       ElMessage.warning(response.description)
     }
@@ -201,68 +206,6 @@ const deleteOrNot = (index) => {
 
 // 定义响应式数据来存储卡片信息
 const cards = ref([]);
-// const cards = ref([
-//   {
-//     id: 1,
-//     title: "第一篇文章",
-//     description: "无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1无需多言1",
-//     author: "许曜麟",
-//     cover: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
-//     isDisabled: false,
-//     clickCount: 0,
-//     likeCount: 0
-//   },
-//   {
-//     id: 2,
-//     title: "第二篇文章",
-//     description: "无需多言2",
-//     author: "王超",
-//     cover: "https://aliyuncdn.antdv.com/vue.png",
-//     isDisabled: false,
-//     clickCount: 0,
-//     likeCount: 0
-//   },
-//   {
-//     id: 3,
-//     title: "第三篇文章",
-//     description: "无需多言3",
-//     author: "陈俊渝",
-//     cover: "https://aliyuncdn.antdv.com/logo.png",
-//     isDisabled: false,
-//     clickCount: 0,
-//     likeCount: 0
-//   },
-//   {
-//     id: 4,
-//     title: "第四篇文章",
-//     description: "无需多言4",
-//     author: "杨曜伟",
-//     cover: "https://avatars.githubusercontent.com/u/31885971?v=4",
-//     isDisabled: false,
-//     clickCount: 0,
-//     likeCount: 0
-//   },
-//   {
-//     id: 5,
-//     title: "第五篇文章",
-//     description: "无需多言5",
-//     author: "陈国汉",
-//     cover: "https://avatars.githubusercontent.com/u/31885971?v=4",
-//     isDisabled: false,
-//     clickCount: 0,
-//     likeCount: 0
-//   },
-//   {
-//     id: 6,
-//     title: "第六篇文章",
-//     description: "无需多言6",
-//     author: "邓丽雯",
-//     cover: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-//     isDisabled: false,
-//     clickCount: 0,
-//     likeCount: 0
-//   },
-// ]);
 
 // 截断超过 10 个字的文章描述
 const truncatedDescription = (description: string) => {

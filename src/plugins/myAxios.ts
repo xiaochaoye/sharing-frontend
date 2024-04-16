@@ -7,8 +7,8 @@ import {notification} from "ant-design-vue";
  */
 
 const myAxios = axios.create({
-      baseURL: 'http://localhost:8080/api',
-      // baseURL: 'http://127.0.0.1:4523/m1/2639333-0-default/api'
+      // baseURL: 'http://localhost:8080/api',
+      baseURL: '/api'
 })
 
 //允许跨域请求时携带身份凭证。

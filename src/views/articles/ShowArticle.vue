@@ -15,7 +15,7 @@
           </el-icon>
         </el-button>
       </el-badge>
-      <el-button @click="al">
+      <el-button @click="copyUrl">
         <el-icon :size="20">
           <Share/>
         </el-icon>
@@ -24,6 +24,9 @@
     <div class="article_show_content">
       <el-form label-width="120px">
         <a-typography-title v-text="title" style="margin: 30px"/>
+        <a-typography-paragraph style="margin: 30px">
+          <blockquote>{{ description }}</blockquote>
+        </a-typography-paragraph>
         <a-typography-title style="margin: 30px" :level="5">作者：{{ author }}</a-typography-title>
         <a-divider style="height: 2px; background-color: #000000"/>
         <v-md-preview :text="text" width="100%" height="100%" style="background-color: #ffffff"></v-md-preview>
@@ -45,13 +48,14 @@ import {getCurrentUser} from "../../config/user.ts";
 const route = useRoute();
 
 const title = ref('')
+const description = ref('')
 const text = ref('')
 const author = ref('')
 const likeCount = ref('')
 const collectCount = ref('')
 const flag = ref(0)
 
-const al = () => {
+const copyUrl = () => {
   navigator.clipboard.writeText(window.location.href).then(() => {
     ElMessage.success("复制链接成功！")
   }).catch((error) => {
@@ -59,8 +63,12 @@ const al = () => {
   })
 }
 
-const increaseLike = () => {
-
+const increaseLike = async () => {
+  const user = await getCurrentUser()
+  if (user == null) {
+    ElMessage.error("未登录！")
+    return
+  }
   if (flag.value >= 1) {
     ElMessage.error("你已经点赞过该文章！")
     return
@@ -100,6 +108,7 @@ async function fetchArticle() {
       }
     });
     text.value = response.data.content;
+    description.value = response.data.description;
     title.value = response.data.title;
     author.value = response.data.author;
     likeCount.value = response.data.likeCount;

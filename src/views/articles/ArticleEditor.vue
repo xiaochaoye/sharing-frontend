@@ -174,7 +174,7 @@ const onSubmit = async () => {
   }).then(response => {
     if (response.code === 0) {
       ElMessage.success("上传成功！")
-      router.push('/main')
+      router.push('/list')
     }
   })
 }

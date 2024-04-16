@@ -4,11 +4,11 @@
       <div class="left-content">
         <div class="itemCon">
           <span class="label">用户昵称：</span>
-          <el-input v-model="inputName" style="width: 240px" placeholder="请输入用户名"/>
+          <el-input v-model="inputName" style="width: 240px" placeholder="请输入用户名" />
         </div>
         <div class="itemCon">
           <span class="label">用户ID：</span>
-          <el-input v-model="inputId" style="width: 240px" placeholder="请输入ID"/>
+          <el-input v-model="inputId" style="width: 240px" placeholder="请输入ID" />
         </div>
         <div class="itemCon">
           <span class="label">性别：</span>
@@ -25,22 +25,27 @@
     </div>
 
     <div class="tableContent">
-      <el-table :data="tableData" max-height="350px" show-overflow-tooltip="true">
-        <el-table-column fixed prop="username" label="用户昵称" width="150"/>
-        <el-table-column prop="id" label="用户ID" width="120"/>
+      <el-table :data="tableData" max-height="480px" show-overflow-tooltip="true">
+        <el-table-column fixed prop="username" label="用户昵称" width="150" />
+        <el-table-column prop="id" label="用户ID" width="120" />
         <el-table-column prop="avatarUrl" label="头像" width="120">
           <template #default="scope">
             <div style="display: flex; align-items: center">
-              <el-image :src="scope.row.avatarUrl" height="50px"/>
+              <el-image :src="scope.row.avatarUrl" height="50px" />
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="phone" label="手机号" width="120"/>
-        <el-table-column prop="email" label="邮箱" width="120"/>
-        <el-table-column prop="gender" label="性别" width="120" :formatter="genderFormat"/>
-        <el-table-column prop="isDelete" label="是否删除" width="120"/>
-        <el-table-column prop="userRole" label="用户角色" width="120"/>
-        <el-table-column prop="userBirthday" label="生日" width="120"/>
+        <el-table-column prop="phone" label="手机号" width="120" />
+        <el-table-column prop="email" label="邮箱" width="120" />
+        <el-table-column prop="gender" label="性别" width="120" :formatter="genderFormat" />
+        <el-table-column prop="isDelete" label="是否删除" width="120" />
+        <el-table-column prop="userRole" label="用户角色" width="120">
+          <template #default="scope">
+            <el-tag v-if="scope.row.userRole === 0" type="success">普通用户</el-tag>
+            <el-tag v-else type="danger">管理员</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="userBirthday" label="生日" width="120" :formatter="birthdayFormat"/>
         <el-table-column fixed="right" prop label="操作" width="120">
           <template #default>
             <el-button link type="primary" size="small" @click="handleClick">编辑</el-button>
@@ -48,18 +53,29 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize"
+        :page-sizes="[10, 20, 30, 40]" :small="false" :disabled="false" :background="true"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
 
   </div>
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
-import {ElMessage, ElMessageBox} from "element-plus";
-import {getCurrentUser} from "../../config/user.ts";
-import {useRouter} from "vue-router";
+import { onMounted, ref } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { getCurrentUser } from "../../config/user.ts";
+import { useRouter } from "vue-router";
+import myAxios from "../../plugins/myAxios.ts";
+import { dayjs } from 'element-plus';
 
 const router = useRouter()
+
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref()
 
 const gender = ref()
 
@@ -67,11 +83,28 @@ const genderFormat = (row) => {
   return row.gender === 0 ? "男" : "女"
 }
 
+const birthdayFormat = (row) => {
+  // 日期格式化
+  return row.userBirthday !== null ? dayjs(row.userBirthday).format('YYYY-MM-DD') : null
+}
+
 const inputName = ref()
 const inputId = ref()
 
 const handleSearch = () => {
-
+  myAxios.get('/user/search', {
+    params: {
+      gender: gender.value,
+      id: inputId.value,
+      username: inputName.value
+    }
+  }).then(res => {
+    if (res.code === 0) {
+      tableData.value = res.data
+    } else {
+      ElMessage.error(res.message)
+    }
+  })
 }
 
 const handleClick = () => {
@@ -80,8 +113,23 @@ const handleClick = () => {
 
 const tableData = ref([])
 
+const handleSizeChange = (val: number) => {
+  currentPage.value = val
+}
+const handleCurrentChange = (val: number) => {
+  pageSize.value = val
+}
 const fetchUser = () => {
-  
+  //  加分页功能
+  myAxios.get('/user/userList', {
+    params: {
+      pageNum: 1,
+      pageSize: 10
+    }
+  }).then(res => {
+    tableData.value = res.data.records
+    total.value = res.data.total
+  })
 }
 
 onMounted(async () => {
