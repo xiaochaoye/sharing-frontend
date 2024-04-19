@@ -85,7 +85,7 @@ const form = reactive<RuleForm>({
   title: '',
   description: '',
   content: '### 右上角全屏编写更方便\n#### 除了已经列举出来的功能外还支持 ***emoji***、***katex***、***mermaid***、***todo-list***、' +
-      '***tip*** 等功能\n #### 暂不支持图片拖拽上传，请使用添加图片按钮'
+      '***tip*** 等功能\n #### 暂不支持图片拖拽上传，请使用添加图片按钮\n' + '[Markdown语法](https://markdown.com.cn/basic-syntax/code.html)'
 })
 
 // 表单校验规则

@@ -45,11 +45,8 @@
           </a-button>
         </a-space>
         <a-space>
-          <a-button type="success" v-if="card.clickCount % 2 == 0" :icon="h(HeartOutlined)"
+          <a-button type="success" :icon="h(HeartOutlined)"
                     @click="handleCollect(card.id)" :disabled="card.isDisabled">{{ card.collectCount }}
-          </a-button>
-          <a-button type="success" v-if="card.clickCount % 2 !== 0" :icon="h(HeartTwoTone)"
-                    @click="removeCollect(card.id)" :disabled="card.isDisabled">{{ card.collectCount }}
           </a-button>
         </a-space>
         <a-button type="success" :icon="h(EllipsisOutlined)" @click="isVisible = true"/>
@@ -123,9 +120,12 @@ const increaseLike = async (index) => {
     ElMessage.error("未登录！")
     return
   }
-  myAxios.get('/article/like', {
-    params: {
-      id: index.id
+  myAxios.post('/article/like', {
+    contentID: index.id,
+    userId: user.id
+  }).then(res => {
+    if (res.code === 0) {
+      ElMessage.success("点赞成功！")
     }
   })
   index.likeCount++;
@@ -136,10 +136,14 @@ const increaseLike = async (index) => {
   }, 1000)
 }
 
-const cancelLike = (index) => {
-  myAxios.get('/article/dislike', {
-    params: {
-      id: index.id
+const cancelLike = async (index) => {
+  const user = await getCurrentUser()
+  myAxios.post('/article/dislike', {
+    contentID: index.id,
+    userId: user.id
+  }).then(res => {
+    if (res.code === 0) {
+      ElMessage.success("取消点赞成功！")
     }
   })
   index.likeCount--;
@@ -161,23 +165,6 @@ const handleCollect = async (id) => {
   }).then(response => {
     if (response.code === 0) {
       ElMessage.success("收藏成功")
-    } else {
-      ElMessage.warning(response.description)
-    }
-  })
-}
-
-const removeCollect = async (id) => {
-  const user = await getCurrentUser()
-  if (user == null) {
-    ElMessage.error("未登录！")
-  }
-  await myAxios.post('/article/favourite/set', {
-    contentID: id,
-    userId: user.id
-  }).then(response => {
-    if (response.code === 0) {
-      ElMessage.success("移除收藏成功")
     } else {
       ElMessage.warning(response.description)
     }

@@ -8,9 +8,9 @@
       </div>
       <el-menu :default-active="routes" class="top" mode="horizontal" background-color="#545c64" text-color="#fff"
                active-text-color="#ffd04b" router>
-        <el-menu-item index="/write">写文章</el-menu-item>
+        <el-menu-item index="/write" v-if="showOptions">写文章</el-menu-item>
         <el-menu-item index="/login">登录页</el-menu-item>
-        <el-menu-item index="/chat">聊聊天</el-menu-item>
+        <el-menu-item index="/chat" v-if="showOptions">聊聊天</el-menu-item>
       </el-menu>
 
       <div>
@@ -54,7 +54,9 @@ const router = useRouter();
 
 const avatarImage = ref<string>('https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png')
 
-const showMe = ref(false)
+const showMe = ref<boolean>(false)
+
+const showOptions = ref<boolean>(false)
 
 const isAdmin = ref(false)
 
@@ -63,6 +65,7 @@ const myAvatarImage = async () => {
   const loginUser = await getCurrentUser();
   if (loginUser !== null) {
     showMe.value = true;
+    showOptions.value = true
   }
   if (loginUser.userRole == 1) {
     isAdmin.value = true
@@ -77,11 +80,26 @@ const choosePage = (command: any) => {
     ElMessage.success("退出成功")
     myAxios.post('/user/logout')
     router.push('/list')
-    window.location.reload()
+    setTimeout(() => {
+          window.location.reload()
+    }, 1000)
   } else {
     router.push(command)
   }
 }
+
+router.beforeEach(async (to, from, next) => {
+  if (to.path === '/write') {
+    const loginUser = await getCurrentUser();
+    if (loginUser.data === null) {
+      next('/');
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
 
 // 回到主页方法
 const goToHomePage = () => {

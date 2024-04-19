@@ -73,10 +73,9 @@ const increaseLike = async () => {
     ElMessage.error("你已经点赞过该文章！")
     return
   }
-  myAxios.get('/article/like', {
-    params: {
-      id: route.query.articleId
-    }
+  myAxios.post('/article/like', {
+    contentID: route.query.articleId,
+    userId: user.id
   })
   likeCount.value = likeCount.value + 1
   flag.value++

@@ -13,7 +13,6 @@
 
   <div class="chatroom">
     <el-container>
-
       <el-header>
         <div class="header">
           <div class="headerLeft">
@@ -28,7 +27,9 @@
           </div>
         </div>
       </el-header>
+
       <el-divider/>
+
       <el-main id="main">
         <div class="content">
           <div class="message" v-for="(item, index) of state.chatData.value" :key="index">
@@ -48,7 +49,7 @@
       <el-footer>
         <el-input ref="getMessage" v-model="state.message" @keyup.enter="state.message === '' ? '' : send()">
           <template #append>
-            <el-button type="success" :disabled="state.message === '' ? true : false" @click="send()">发送消息
+            <el-button type="success" :disabled="state.message === '' ? true : false" @click="send()" >发送消息
             </el-button>
           </template>
         </el-input>
